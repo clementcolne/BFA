@@ -23,7 +23,7 @@ class Resistance(Filtre):
         for i in range(5):
             maxs.append(max(copie, key=itemgetter('cout')))
             copie.remove(maxs[len(maxs) - 1])
-        sorted(maxs, key=itemgetter('date'))
+        maxs = sorted(maxs, key=itemgetter('date'))
 
         # Calcul de la pente
         p = 0
