@@ -1,10 +1,10 @@
 class Graph:
-    data: dict
+    data: []
 
     """Constructeur de Graph"""
 
     def __init__(self):
-        self.data = dict()
+        self.data = []
 
     """Procédure de remplissage du graph
     @:param donnees les informations du graph"""

@@ -1,13 +1,5 @@
 from Graph import Graph
-from app import app
 from flask_mysqldb import MySQL
-
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'api'
-
-mysql = MySQL(app)
 
 
 class Action:
@@ -51,19 +43,8 @@ class Action:
     @:param dateDebut date de début des informations à récupérer
     @:param dateFin date de fin des informations à récupérer"""
 
-    def remplirGraph(self, dateDebut, dateFin):
-        # Récupération des données du graph dans la base de données
-        cursor = mysql.connection.cursor()
-        cursor.execute(
-            '''SELECT * FROM days WHERE name = ''' + self.nom + '''and (date between ''' + dateDebut + ''' and ''' + dateFin + ''')''') # Modifier la requête par id, pas par nom
-        data = cursor.fetchall()
-        cursor.close()
-        donnees = dict()
-
-        # On remplit le dictionnaire des données de l'action sur la période considérée
-        for row in data:
-            donnees['date': row[0]] =\
-                {'OpeningPrice': row[1], 'TopPrice': row[2], 'BottomPrice': row[3], 'ClosingPrice': row[4]}
-
-        # On donne les données au graph
+    def remplirGraph(self, donnees):
         self.graph.remplirGraph(donnees)
+
+    def getGraphData(self):
+        return self.graph.getData()
