@@ -1,10 +1,10 @@
 from unittest import TestCase
 from datetime import date
-from pipeAndFilter.filters.Resistance import Resistance
+from pipeAndFilter.filters.Support import Support
 from models.Action import Action
 
 
-class TestResistance(TestCase):
+class TestSupport(TestCase):
     def test_process(self):
         # Création des objets pour les tests
         actionTest1 = Action("Test1")
@@ -13,7 +13,7 @@ class TestResistance(TestCase):
         graphData1 = list()
         graphData2 = list()
         graphData3 = list()
-        res = Resistance()
+        res = Support()
 
         # Initialisation des données graphiques de tests
         day1 = {'date': date(2020, 1, 1), 'data': [0, 0, 0, 60, 0]}

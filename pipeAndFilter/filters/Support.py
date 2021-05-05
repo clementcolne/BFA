@@ -1,10 +1,10 @@
-from Filtre import Filtre
+from pipeAndFilter.filters.Filtre import Filtre
 import copy
 from operator import itemgetter
 
 
-class Resistance(Filtre):
-    """Procédure d'exécution du filtre
+class Support(Filtre):
+    """Procédure d'exécution de filtre
     @:param action l'action sur laquelle on applique le filtre"""
 
     def process(self, action):
@@ -16,12 +16,12 @@ class Resistance(Filtre):
         for row in data:
             clotureData.append({'date': row['date'], 'cout': row['data'][3]})
 
-        # Récupération des points les plus hauts de la courbe
+        # Récupération des points les plus bas de la courbe
         copie = copy.deepcopy(clotureData)
         maxs = list()
 
         for i in range(5):
-            maxs.append(max(copie, key=itemgetter('cout')))
+            maxs.append(min(copie, key=itemgetter('cout')))
             copie.remove(maxs[len(maxs) - 1])
         sorted(maxs, key=itemgetter('date'))
 
