@@ -111,8 +111,8 @@ class TestSupport(TestCase):
         graphData3.append(day11)
         graphData3.append(day12)
 
-        actionTest3.remplirGraph(graphData2)
-        res.process(actionTest2)
+        actionTest3.remplirGraph(graphData3)
+        res.process(actionTest3)
         actionTest3.calculFinalNote()
 
         self.assertEqual(actionTest3.getFinalNote(), 0)

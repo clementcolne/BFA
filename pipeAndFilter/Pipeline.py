@@ -1,3 +1,6 @@
+import types
+
+
 class Pipeline:
     filtres: []  # Liste des filtres du pipeline
 
@@ -18,7 +21,10 @@ class Pipeline:
     def execute(self, action):
         # On parcourt la liste des filtres et on les applique à l'action
         for f in self.filtres:
-            f(action)
+            if type(f) == types.FunctionType:
+                f(action)
+            else:
+                f.process(action)
 
     """Fonction qui récupère le nombre de filtres dans le pipeline"""
 
