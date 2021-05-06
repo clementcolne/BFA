@@ -13,10 +13,11 @@ class ConfigTest:
         cost = 60
         high = 61
         low = 59
+        vol = 1000
 
         # Génération du graph
         for i in range(100):
-            data = {'date': date(2020, month, day), 'data': [0, high, low, cost, 0]}
+            data = {'date': date(2020, month, day), 'data': [0, high, low, cost, vol]}
             graphData.append(data)
 
             if i % 5 == 0:
@@ -34,6 +35,7 @@ class ConfigTest:
             cost += factor
             high += factor + randint(0, 3)
             low += factor + randint(-2, 0)
+            vol += randint(300, 3000)
 
         return graphData
 
@@ -46,10 +48,11 @@ class ConfigTest:
         cost = 60
         high = 61
         low = 59
+        vol = 1000
 
         # Génération du graph
         for i in range(100):
-            data = {'date': date(2020, month, day), 'data': [0, high, low, cost, 0]}
+            data = {'date': date(2020, month, day), 'data': [0, high, low, cost, vol]}
             graphData.append(data)
 
             if i % 5 == 0:
@@ -67,6 +70,7 @@ class ConfigTest:
             cost -= factor
             high -= factor + randint(0, 3)
             low -= factor + randint(-2, 0)
+            vol += randint(300, 3000)
 
         return graphData
 
@@ -79,10 +83,11 @@ class ConfigTest:
         cost = 60
         high = 61
         low = 59
+        vol = 1000
 
         # Génération du graph
         for i in range(100):
-            data = {'date': date(2020, month, day), 'data': [0, high, low, cost, 0]}
+            data = {'date': date(2020, month, day), 'data': [0, high, low, cost, vol]}
             graphData.append(data)
 
             if i % 5 == 0:
@@ -97,7 +102,7 @@ class ConfigTest:
                 day += 1
 
             factor = randrange(-5, 0)
-            if day % 3 == 0:
+            if day % 2 == 0:
                 cost -= factor
                 high -= (factor + randint(0, 3))
                 low -= (factor + randrange(-2, 0))
@@ -105,5 +110,7 @@ class ConfigTest:
                 cost += factor
                 high += factor + randint(0, 3)
                 low += factor + randrange(-2, 0)
+
+            vol += randint(-3000, 3000)
 
         return graphData
