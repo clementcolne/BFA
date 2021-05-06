@@ -99,9 +99,11 @@ class ConfigTest:
             factor = randrange(-5, 0)
             if day % 3 == 0:
                 cost -= factor
+                high -= (factor + randint(0, 3))
+                low -= (factor + randrange(-2, 0))
             else:
                 cost += factor
-            high += factor + randint(0, 3)
-            low += factor + randrange(-2, 0)
+                high += factor + randint(0, 3)
+                low += factor + randrange(-2, 0)
 
         return graphData
