@@ -16,16 +16,16 @@ class TestAlgorithme(TestCase):
         # Exécution du test
         Algorithme.Notation(actionTest1)
 
-        self.assertEqual(actionTest1.getFinalNote(), 20)
+        self.assertTrue(actionTest1.getFinalNote() >= 60)
 
         # Test 2
         actionTest2.remplirGraph(ConfigTest.get_graph_baisse())
         Algorithme.Notation(actionTest2)
 
-        self.assertEqual(actionTest2.getFinalNote(), -20)
+        self.assertTrue(actionTest2.getFinalNote() <= -60)
 
         # Test 3
         actionTest3.remplirGraph(ConfigTest.get_graph_stable())
         Algorithme.Notation(actionTest3)
 
-        self.assertEqual(actionTest3.getFinalNote(), 0)
+        self.assertTrue(60 > actionTest3.getFinalNote() > -60)

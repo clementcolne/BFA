@@ -1,6 +1,7 @@
 from pipeAndFilter.Pipeline import Pipeline
 from pipeAndFilter.filters.Resistance import Resistance
 from pipeAndFilter.filters.Support import Support
+from pipeAndFilter.filters.MoyenneArithmetique import MoyenneArithmetique
 
 
 class Algorithme:
@@ -13,9 +14,10 @@ class Algorithme:
         # Création des filtres
         res = Resistance()
         sup = Support()
+        ma = MoyenneArithmetique()
 
         # Ajout des filtres au pipeline et exécution
-        pipe.addFilter([res, sup])
+        pipe.addFilter([res, sup, ma])
         pipe.execute(action)
 
         # Calcul de la note finale de l'action

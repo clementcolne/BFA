@@ -1,0 +1,38 @@
+from unittest import TestCase
+from models.Action import Action
+from pipeAndFilter.filters.MoyenneArithmetique import MoyenneArithmetique
+from tools.ConfigTest import ConfigTest
+
+
+class TestMoyenneArithmetique(TestCase):
+    def test_process(self):
+        # Création des objets pour les tests
+        action1 = Action("Test1")
+        action2 = Action("Test2")
+        action3 = Action("Test3")
+        ma = MoyenneArithmetique()
+
+        # Test tendance haussiere
+        action1.remplirGraph(ConfigTest.get_graph_hausse())
+
+        ma.process(action1)
+        action1.calculFinalNote()
+
+        self.assertTrue(action1.getFinalNote() > 10)
+
+        # Test tendance baissiere
+        action2.remplirGraph(ConfigTest.get_graph_baisse())
+
+        ma.process(action2)
+        action2.calculFinalNote()
+
+        self.assertTrue(action2.getFinalNote() < 10)
+
+        # Test graph stable
+        action3.remplirGraph(ConfigTest.get_graph_stable())
+
+        ma.process(action3)
+        action3.calculFinalNote()
+
+        #Resultat faux lorsque le graph se construit en hausse ou en baisse
+        self.assertTrue(40 > action3.getFinalNote() > -40)
