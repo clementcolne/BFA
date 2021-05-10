@@ -28,7 +28,7 @@ class Resistance(Filtre):
         # Calcul de la pente
         p = 0
         for i in range(len(maxs) - 1):
-            for j in range(i + 1, len(maxs) - 1, 1):
+            for j in range(i + 1, len(maxs), 1):
                 p += (maxs[j]['cout'] - maxs[i]['cout']) / int((maxs[j]['date'] - maxs[i]['date']).days)
         p = p / len(maxs)
 

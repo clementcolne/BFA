@@ -43,21 +43,21 @@ class TestStochastique(TestCase):
         sto.process(action1)
         action1.calculFinalNote()
 
-        self.assertEqual(action1.getFinalNote(), -10)
+        self.assertEqual(action1.getFinalNote(), 0)
 
         # Test 2
         action2.remplirGraph(ConfigTest.get_graph_baisse())
         sto.process(action2)
         action2.calculFinalNote()
 
-        self.assertEqual(action2.getFinalNote(), -10)
+        self.assertEqual(action2.getFinalNote(), 0)
 
         # Test 3
         action3.remplirGraph(ConfigTest.get_graph_baisse())
         sto.process(action3)
         action3.calculFinalNote()
 
-        self.assertEqual(action3.getFinalNote(), -10)
+        self.assertEqual(action3.getFinalNote(), 0)
 
     def test_process_stable(self):
         action1 = Action("Test1")
@@ -107,20 +107,20 @@ class TestStochastique(TestCase):
         sto.process(action1)
         action1.calculFinalNote()
 
-        self.assertEqual(action1.getFinalNote(), 0)
+        self.assertEqual(action1.getFinalNote(), -10)
 
         # Test 2
         action2.remplirGraph(ConfigTest.get_change_for_baisse())
         sto.process(action2)
         action2.calculFinalNote()
 
-        self.assertEqual(action2.getFinalNote(), 0)
+        self.assertEqual(action2.getFinalNote(), -10)
 
         # Test 3
         action3.remplirGraph(ConfigTest.get_change_for_baisse())
         sto.process(action3)
         action3.calculFinalNote()
 
-        self.assertEqual(action3.getFinalNote(), 0)
+        self.assertEqual(action3.getFinalNote(), -10)
 
     # Note : ajouter une config de test avec un graph plus mouvementé pour tester le Stochastique

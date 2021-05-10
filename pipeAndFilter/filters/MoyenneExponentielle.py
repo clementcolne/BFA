@@ -25,7 +25,7 @@ class MoyenneExponentielle(Filtre):
             sum += cost[i]['cout']
         mme12.append(sum / 12 + (2 / 13) * (cost[12]['cout'] - sum / 12))
 
-        for i in range(13, len(cost) - 1, 1):
+        for i in range(13, len(cost), 1):
             mme12.append(mme12[len(mme12) - 1] + (2 / 13) * (cost[i]['cout'] - mme12[len(mme12) - 1]))
 
         # Calcul de la MME26    //Idem que MM12
@@ -34,7 +34,7 @@ class MoyenneExponentielle(Filtre):
             sum += cost[i]['cout']
         mme26.append(sum / 26 + (2 / 27) * (cost[26]['cout'] - sum / 26))
 
-        for i in range(27, len(cost) - 1, 1):
+        for i in range(27, len(cost), 1):
             mme26.append(mme26[len(mme26) - 1] + (2 / 27) * (cost[i]['cout'] - mme26[len(mme26) - 1]))
 
         # Calcul de la MACD
@@ -48,7 +48,7 @@ class MoyenneExponentielle(Filtre):
             sum += macd[i]
         mme9.append(sum / 9 + (2 / 10) * (macd[9] - sum / 9))
 
-        for i in range(10, len(macd) - 1, 1):
+        for i in range(10, len(macd), 1):
             mme9.append(mme9[len(mme9) - 1] + (2 / 10) * (macd[i] - mme9[len(mme9) - 1]))
 
         # Test si la MACD > MME9

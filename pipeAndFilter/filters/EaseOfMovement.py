@@ -12,7 +12,7 @@ class EaseOfMovement(Filtre):
         sum = 0
 
         # Calcul de l'EMV
-        for i in range(1, len(data) - 1, 1):
+        for i in range(1, len(data), 1):
             emv.append(((((data[i]['data'][1] + data[i]['data'][2]) / 2) - (
                         (data[i - 1]['data'][1] - data[i - 1]['data'][2]) / 2)) / (
                                    data[i]['data'][4] / (data[i]['data'][1] - data[i]['data'][2])))*10000)

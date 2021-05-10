@@ -24,7 +24,7 @@ class Stochastique(Filtre):
             cost.append({'date': row['date'], 'haut': row['data'][1], 'bas': row['data'][2], 'cloture': row['data'][3]})
 
         # Calcul du stochastique
-        for i in range(13, len(cost) - 1, 1):
+        for i in range(13, len(cost), 1):
             for j in range(i - 13, i, 1):
                 temp.append(cost[j])
             haut = max(temp, key=itemgetter('haut'))
@@ -43,7 +43,7 @@ class Stochastique(Filtre):
 
         # On calcule la pente de K sur les derniers jours
         for i in range(len(temp) - 1):
-            for j in range(i + 1, len(temp) - 1, 1):
+            for j in range(i + 1, len(temp), 1):
                 p += (temp[j] - temp[i]) / int((temp2[j] - temp2[i]).days)
         p = p / len(temp)
 

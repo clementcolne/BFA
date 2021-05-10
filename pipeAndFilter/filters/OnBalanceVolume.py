@@ -30,7 +30,7 @@ class OnBalanceVolume(Filtre):
             tmp.append(obv[len(obv) - i])
 
         for i in range(len(tmp) - 1):
-            for j in range(i + 1, len(tmp) - 1, 1):
+            for j in range(i + 1, len(tmp), 1):
                 p1 += (tmp[j] - tmp[i]) / int((cost[len(cost) - 20 + j]['date'] - cost[len(cost) - 20 + i]['date']).days)
         p1 = p1 / len(tmp)
 
@@ -40,7 +40,7 @@ class OnBalanceVolume(Filtre):
             tmp.append(cost[len(cost) - i]['cout'])
 
         for i in range(len(tmp) - 1):
-            for j in range(i + 1, len(tmp) - 1, 1):
+            for j in range(i + 1, len(tmp), 1):
                 p2 += (tmp[j] - tmp[i]) / int((cost[len(cost) - 20 + j]['date'] - cost[len(cost) - 20 + i]['date']).days)
         p2 = p2 / len(tmp)
 

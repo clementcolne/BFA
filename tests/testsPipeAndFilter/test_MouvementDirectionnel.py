@@ -97,18 +97,18 @@ class TestMouvementDirectionnel(TestCase):
         mv.process(action1)
         action1.calculFinalNote()
 
-        self.assertTrue(action1.getFinalNote() > 10)
+        self.assertTrue(action1.getFinalNote() >= 10)
 
         # Test 2
         action2.remplirGraph(ConfigTest.get_change_for_baisse())
         mv.process(action2)
         action2.calculFinalNote()
 
-        self.assertTrue(action2.getFinalNote() > 10)
+        self.assertTrue(action2.getFinalNote() >= 10)
 
         # Test 3
         action3.remplirGraph(ConfigTest.get_change_for_baisse())
         mv.process(action3)
         action3.calculFinalNote()
 
-        self.assertTrue(action3.getFinalNote() > 10)
+        self.assertTrue(action3.getFinalNote() >= 10)
