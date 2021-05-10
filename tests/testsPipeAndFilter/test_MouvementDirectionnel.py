@@ -85,3 +85,30 @@ class TestMouvementDirectionnel(TestCase):
         action3.calculFinalNote()
 
         self.assertTrue(action3.getFinalNote() < -10)
+
+    def test_process_change_for_baisse(self):
+        action1 = Action("Test1")
+        action2 = Action("Test2")
+        action3 = Action("Test3")
+        mv = MouvementDirectionnel()
+
+        # Test 1
+        action1.remplirGraph(ConfigTest.get_change_for_baisse())
+        mv.process(action1)
+        action1.calculFinalNote()
+
+        self.assertTrue(action1.getFinalNote() > 10)
+
+        # Test 2
+        action2.remplirGraph(ConfigTest.get_change_for_baisse())
+        mv.process(action2)
+        action2.calculFinalNote()
+
+        self.assertTrue(action2.getFinalNote() > 10)
+
+        # Test 3
+        action3.remplirGraph(ConfigTest.get_change_for_baisse())
+        mv.process(action3)
+        action3.calculFinalNote()
+
+        self.assertTrue(action3.getFinalNote() > 10)
