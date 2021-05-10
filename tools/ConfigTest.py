@@ -69,7 +69,7 @@ class ConfigTest:
             factor = randint(1, 10)
             cost -= factor
             high -= factor + randint(0, 3)
-            low -= factor + randint(-2, 0)
+            low -= factor + randint(0, 2)
             vol += randint(300, 3000)
 
         return graphData
@@ -145,7 +145,7 @@ class ConfigTest:
             factor = randint(1, 10)
             cost -= factor
             high -= factor + randint(0, 3)
-            low -= factor + randint(-2, 0)
+            low -= factor + randint(0, 2)
             vol += randint(-3000, 3000)
 
         for i in range(10):
@@ -201,7 +201,7 @@ class ConfigTest:
             factor = randint(1, 10)
             cost += factor
             high += factor + randint(0, 3)
-            low += factor + randint(-2, 0)
+            low += factor + randint(0, 2)
             vol += randint(-3000, 3000)
 
         for i in range(10):
