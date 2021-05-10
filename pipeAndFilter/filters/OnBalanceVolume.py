@@ -34,9 +34,6 @@ class OnBalanceVolume(Filtre):
                 p1 += (tmp[j] - tmp[i]) / int((cost[len(cost) - 20 + j]['date'] - cost[len(cost) - 20 + i]['date']).days)
         p1 = p1 / len(tmp)
 
-        if p1 > 0:
-            ho = True
-
         # Calcul hausse ou baisse des couts sur les derniers jours
         tmp.clear()
         for i in range(20, 1, -1):
@@ -46,9 +43,6 @@ class OnBalanceVolume(Filtre):
             for j in range(i + 1, len(tmp) - 1, 1):
                 p2 += (tmp[j] - tmp[i]) / int((cost[len(cost) - 20 + j]['date'] - cost[len(cost) - 20 + i]['date']).days)
         p2 = p2 / len(tmp)
-
-        if p2 > 0:
-            hc = True
 
         # Résultat des tests
         if p1 > 0 and p2 > 0:

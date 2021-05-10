@@ -13,6 +13,8 @@ class Stochastique(Filtre):
         d = list()
         temp = list()
         temp2 = list()
+        haut = dict()
+        bas = dict()
         H = False
         B = False
         p = 0
@@ -25,13 +27,17 @@ class Stochastique(Filtre):
         for i in range(13, len(cost) - 1, 1):
             for j in range(i - 13, i, 1):
                 temp.append(cost[j])
-            K.append(100 * ((cost[i]['cloture'] - max(temp, key=itemgetter('bas'))) / (
-                    max(temp, key=itemgetter('haut')) - max(temp, key=itemgetter('bas')))))
+            haut = max(temp, key=itemgetter('haut'))
+            bas = min(temp, key=itemgetter('bas'))
+            if (haut['haut'] - bas['bas']) == 0:
+                action.addNote(0)
+                return
+            K.append(100 * ((cost[i]['cloture'] - bas['bas']) / (haut['haut'] - bas['bas'])))
             d.append(cost[i]['date'])
             temp.clear()
 
         # On regarde si K est en hausse ou en baisse sur les derniers jours
-        for i in range(1, 20, -1):
+        for i in range(1, 20, 1):
             temp.append(K[len(K) - i])
             temp2.append(d[len(d) - i])
 
