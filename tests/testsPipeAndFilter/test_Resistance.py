@@ -19,21 +19,21 @@ class TestResistance(TestCase):
         res.process(actionTest1)
         actionTest1.calculFinalNote()
 
-        self.assertEqual(actionTest1.getFinalNote(), 10)
+        self.assertEqual(actionTest1.getFinalNote(), 20)
 
         # Test 2
         actionTest2.remplirGraph(ConfigTest.get_graph_hausse())
         res.process(actionTest2)
         actionTest2.calculFinalNote()
 
-        self.assertEqual(actionTest2.getFinalNote(), 10)
+        self.assertEqual(actionTest2.getFinalNote(), 20)
 
         # Test 3
         actionTest3.remplirGraph(ConfigTest.get_graph_hausse())
         res.process(actionTest3)
         actionTest3.calculFinalNote()
 
-        self.assertEqual(actionTest3.getFinalNote(), 10)
+        self.assertEqual(actionTest3.getFinalNote(), 20)
 
     def test_process_baisse(self):
         actionTest1 = Action("Test1")
@@ -46,21 +46,21 @@ class TestResistance(TestCase):
         res.process(actionTest1)
         actionTest1.calculFinalNote()
 
-        self.assertEqual(actionTest1.getFinalNote(), -10)
+        self.assertEqual(actionTest1.getFinalNote(), -20)
 
         # Test 2
         actionTest2.remplirGraph(ConfigTest.get_graph_baisse())
         res.process(actionTest2)
         actionTest2.calculFinalNote()
 
-        self.assertEqual(actionTest2.getFinalNote(), -10)
+        self.assertEqual(actionTest2.getFinalNote(), -20)
 
         # Test 3
         actionTest3.remplirGraph(ConfigTest.get_graph_baisse())
         res.process(actionTest3)
         actionTest3.calculFinalNote()
 
-        self.assertEqual(actionTest3.getFinalNote(), -10)
+        self.assertEqual(actionTest3.getFinalNote(), -20)
 
     def test_process_stable(self):
         actionTest1 = Action("Test1")

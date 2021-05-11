@@ -34,8 +34,8 @@ class Resistance(Filtre):
 
         # Ajout d'une note à l'action
         if p > 0:
-            action.addNote(10)
+            action.addNote(20)
         elif p < 0:
-            action.addNote(-10)
+            action.addNote(-20)
         else:
             action.addNote(0)

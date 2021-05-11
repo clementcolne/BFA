@@ -20,7 +20,7 @@ class MoyenneExponentielle(Filtre):
         for row in data:
             cost.append({'date': row['date'], 'cout': row['data'][3]})
 
-        # Calcul de la MME12    //Calcul sur 12 séances, à ajuster par la suite à 12 jours
+        # Calcul de la MME12
         for i in range(12):
             sum += cost[i]['cout']
         mme12.append(sum / 12 + (2 / 13) * (cost[12]['cout'] - sum / 12))
@@ -28,7 +28,7 @@ class MoyenneExponentielle(Filtre):
         for i in range(13, len(cost), 1):
             mme12.append(mme12[len(mme12) - 1] + (2 / 13) * (cost[i]['cout'] - mme12[len(mme12) - 1]))
 
-        # Calcul de la MME26    //Idem que MM12
+        # Calcul de la MME26
         sum = 0
         for i in range(26):
             sum += cost[i]['cout']
