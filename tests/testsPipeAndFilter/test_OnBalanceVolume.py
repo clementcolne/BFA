@@ -62,6 +62,7 @@ class TestOnBalanceVolume(TestCase):
         action1.calculFinalNote()
 
         # Ne fonctione pas toujours selon les données du graph
+        # Beaucoup de faux signaux en période de range
         self.assertEqual(action1.getFinalNote(), 0)
 
     def test_process_change_for_hausse(self):

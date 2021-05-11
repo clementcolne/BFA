@@ -18,13 +18,13 @@ class MoyenneArithmetique(Filtre):
         for row in data:
             cost.append({'date': row['date'], 'cout': row['data'][3]})
 
-        # Calcul de la MMA20    //Calcul sur 20 séances, à ajuster par la suite à 20 jours
+        # Calcul de la MMA20
         for i in range(20, len(cost), 1):
             for j in range(20):
                 sum += cost[i - j]['cout']
             mma20.append(sum / 20)
 
-        # Calcul de la MMA50    //Idem que MMA20
+        # Calcul de la MMA50
         sum = 0
         for i in range(50, len(cost), 1):
             for j in range(50):

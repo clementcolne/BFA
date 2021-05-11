@@ -60,7 +60,7 @@ class MoyenneExponentielle(Filtre):
             note += 0
 
         # Test MACD en hausse ou en baisse
-        """for i in range(20):
+        for i in range(14):
             # MACD en hausse -> on augmente la note
             if macd[len(macd) - 1 - i] > macd[len(macd) - 2 - i]:
                 note += 1
@@ -68,21 +68,6 @@ class MoyenneExponentielle(Filtre):
             elif macd[len(macd) - 1 - i] < macd[len(macd) - 2 - i]:
                 note -= 1
             else:
-                note += 0"""
-
-        # On cherche le dernier croisement entre la macd et sa ligne de signal
-        """found = False
-        i = 0
-        while not found and i < len(mme9):
-            if macd[len(macd) - 1 - i] == mme9[len(mme9) - 1 - i]:
-                found = True
-            i += 1
-
-        if macd[len(macd) - i] > mme9[len(mme9) - i]:
-            action.addNote(20)
-        elif macd[len(macd) - i] < mme9[len(mme9) - i]:
-            action.addNote(-20)
-        else:
-            action.addNote(0)"""
+                note += 0
 
         action.addNote(note)

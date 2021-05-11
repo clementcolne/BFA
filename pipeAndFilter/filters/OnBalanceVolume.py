@@ -36,7 +36,7 @@ class OnBalanceVolume(Filtre):
 
         # Calcul hausse ou baisse des couts sur les derniers jours
         tmp.clear()
-        for i in range(20, 1, -1):
+        for i in range(20, 0, -1):
             tmp.append(cost[len(cost) - i]['cout'])
 
         for i in range(len(tmp) - 1):
@@ -47,7 +47,11 @@ class OnBalanceVolume(Filtre):
         # Résultat des tests
         if p1 > 0 and p2 > 0:
             action.addNote(10)
+        elif p1 > 0 and p2 < 0:
+            action.addNote(10)
         elif p1 < 0 and p2 < 0:
+            action.addNote(-10)
+        elif p1 < 0 and p2 > 0:
             action.addNote(-10)
         else:
             action.addNote(0)
