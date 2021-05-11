@@ -5,27 +5,95 @@ from models.Action import Action
 
 
 class TestAlgorithme(TestCase):
-    def test_notation(self):
+    def test_notation_hausse(self):
         # Création des objets pour les tests
-        actionTest1 = Action("Test1")
-        actionTest2 = Action("Test2")
-        actionTest3 = Action("Test3")
+        action1 = Action("Test1")
+        action2 = Action("Test2")
+        action3 = Action("Test3")
 
-        actionTest1.remplirGraph(ConfigTest.get_graph_hausse())
+        # Test 1
+        action1.remplirGraph(ConfigTest.get_graph_hausse())
+        Algorithme.Notation(action1)
 
-        # Exécution du test
-        Algorithme.Notation(actionTest1)
-
-        self.assertTrue(actionTest1.getFinalNote() >= 60)
+        self.assertTrue(action1.getFinalNote() > 0)
 
         # Test 2
-        actionTest2.remplirGraph(ConfigTest.get_graph_baisse())
-        Algorithme.Notation(actionTest2)
+        action2.remplirGraph(ConfigTest.get_graph_hausse())
+        Algorithme.Notation(action2)
 
-        self.assertTrue(actionTest2.getFinalNote() <= -60)
+        self.assertTrue(action2.getFinalNote() > 0)
 
         # Test 3
-        actionTest3.remplirGraph(ConfigTest.get_graph_stable())
-        Algorithme.Notation(actionTest3)
+        action3.remplirGraph(ConfigTest.get_graph_hausse())
+        Algorithme.Notation(action3)
 
-        self.assertTrue(60 > actionTest3.getFinalNote() > -60)
+        self.assertTrue(action3.getFinalNote() > 0)
+
+    def test_notation_baisse(self):
+        action1 = Action("Test1")
+        action2 = Action("Test2")
+        action3 = Action("Test3")
+
+        # Test 1
+        action1.remplirGraph(ConfigTest.get_graph_baisse())
+        Algorithme.Notation(action1)
+
+        self.assertTrue(action1.getFinalNote() < 0)
+
+        # Test 2
+        action2.remplirGraph(ConfigTest.get_graph_baisse())
+        Algorithme.Notation(action2)
+
+        self.assertTrue(action2.getFinalNote() < 0)
+
+        # Test 3
+        action3.remplirGraph(ConfigTest.get_graph_baisse())
+        Algorithme.Notation(action3)
+
+        self.assertTrue(action3.getFinalNote() < 0)
+
+    def test_notation_change_for_hausse(self):
+        action1 = Action("Test1")
+        action2 = Action("Test2")
+        action3 = Action("Test3")
+
+        # Test 1
+        action1.remplirGraph(ConfigTest.get_change_for_hausse())
+        Algorithme.Notation(action1)
+
+        self.assertTrue(action1.getFinalNote() > 0)
+
+        # Test 2
+        action2.remplirGraph(ConfigTest.get_change_for_hausse())
+        Algorithme.Notation(action2)
+
+        self.assertTrue(action2.getFinalNote() > 0)
+
+        # Test 3
+        action3.remplirGraph(ConfigTest.get_change_for_hausse())
+        Algorithme.Notation(action3)
+
+        self.assertTrue(action3.getFinalNote() > 0)
+
+    def test_notation_change_for_baisse(self):
+        action1 = Action("Test1")
+        action2 = Action("Test2")
+        action3 = Action("Test3")
+
+        # Test 1
+        action1.remplirGraph(ConfigTest.get_change_for_baisse())
+        Algorithme.Notation(action1)
+
+        self.assertTrue(action1.getFinalNote() < 0)
+
+        # Test 2
+        action2.remplirGraph(ConfigTest.get_change_for_baisse())
+        Algorithme.Notation(action2)
+
+        self.assertTrue(action2.getFinalNote() < 0)
+
+        # Test 3
+        action3.remplirGraph(ConfigTest.get_change_for_baisse())
+        Algorithme.Notation(action3)
+
+        self.assertTrue(action3.getFinalNote() < 0)

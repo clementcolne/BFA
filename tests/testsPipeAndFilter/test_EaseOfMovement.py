@@ -79,4 +79,4 @@ class TestEaseOfMovement(TestCase):
         eom.process(action1)
         action1.calculFinalNote()
 
-        self.assertEqual(action1.getFinalNote(), 10)
+        self.assertEqual(action1.getFinalNote(), -10)
