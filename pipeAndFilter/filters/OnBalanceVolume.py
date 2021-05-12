@@ -20,13 +20,14 @@ class OnBalanceVolume(Filtre):
         # Calcul de l'OBV
         obv.append(cost[0]['volume'])
 
-        for i in range(1, len(cost), 1):
-            if (cost[i]['cout'] - cost[i - 1]['cout']) == 0:
-                action.addNote(0)
-                return
-            obv.append(obv[len(obv) - 1] + (
-                    (cost[i]['cout'] - cost[i - 1]['cout']) / abs(cost[i]['cout'] - cost[i - 1]['cout'])) * cost[i][
-                           'volume'])
+        try:
+            for i in range(1, len(cost), 1):
+                obv.append(obv[len(obv) - 1] + (
+                        (cost[i]['cout'] - cost[i - 1]['cout']) / abs(cost[i]['cout'] - cost[i - 1]['cout'])) * cost[i][
+                               'volume'])
+        except ZeroDivisionError:
+            action.addNote(0)
+            return
 
         # Calcul hausse ou baisse de l'OBV sur les derniers jours
         for i in range(20, 1, -1):

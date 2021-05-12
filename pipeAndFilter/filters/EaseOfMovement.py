@@ -18,17 +18,15 @@ class EaseOfMovement(Filtre):
         box = 0
 
         # Calcul de l'EMV
-        for i in range(1, len(data), 1):
-            if (data[i]['data'][1] - data[i]['data'][2]) == 0:
-                action.addNote(0)
-                return
-            distance = (((data[i]['data'][1] + data[i]['data'][2]) / 2) - (
-                        (data[i - 1]['data'][1] + data[i - 1]['data'][2]) / 2))
-            box = data[i]['data'][4] / (data[i]['data'][1] - data[i]['data'][2])
-            if distance/box == 0:
-                action.addNote(0)
-                return
-            emv.append((distance/box)*10000)
+        try:
+            for i in range(1, len(data), 1):
+                distance = (((data[i]['data'][1] + data[i]['data'][2]) / 2) - (
+                            (data[i - 1]['data'][1] + data[i - 1]['data'][2]) / 2))
+                box = data[i]['data'][4] / (data[i]['data'][1] - data[i]['data'][2])
+                emv.append((distance/box)*10000)
+        except ZeroDivisionError:
+            action.addNote(0)
+            return
 
         # Calcul de l'EMV(14) //moyenne mobile sur 14 jours de l'EMV
         for i in range(13, len(emv), 1):

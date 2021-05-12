@@ -23,17 +23,18 @@ class Stochastique(Filtre):
             cost.append({'date': row['date'], 'haut': row['data'][1], 'bas': row['data'][2], 'cloture': row['data'][3]})
 
         # Calcul du stochastique
-        for i in range(13, len(cost), 1):
-            for j in range(i - 13, i, 1):
-                temp.append(cost[j])
-            haut = max(temp, key=itemgetter('haut'))
-            bas = min(temp, key=itemgetter('bas'))
-            if (haut['haut'] - bas['bas']) == 0:
-                action.addNote(0)
-                return
-            K.append(100 * ((cost[i]['cloture'] - bas['bas']) / (haut['haut'] - bas['bas'])))
-            d.append(cost[i]['date'])
-            temp.clear()
+        try:
+            for i in range(13, len(cost), 1):
+                for j in range(i - 13, i, 1):
+                    temp.append(cost[j])
+                haut = max(temp, key=itemgetter('haut'))
+                bas = min(temp, key=itemgetter('bas'))
+                K.append(100 * ((cost[i]['cloture'] - bas['bas']) / (haut['haut'] - bas['bas'])))
+                d.append(cost[i]['date'])
+                temp.clear()
+        except ZeroDivisionError:
+            action.addNote(0)
+            return
 
         # On regarde si K est en hausse ou en baisse sur les derniers jours
         for i in range(1, 20, 1):
