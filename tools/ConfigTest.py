@@ -148,7 +148,7 @@ class ConfigTest:
             low -= factor + randint(0, 2)
             vol += randint(-3000, 3000)
 
-        for i in range(10):
+        for i in range(16):
             factor = randint(10, 30)
             cost += factor
             high += factor + randint(0, 5)
@@ -204,7 +204,7 @@ class ConfigTest:
             low += factor + randint(0, 2)
             vol += randint(-3000, 3000)
 
-        for i in range(10):
+        for i in range(16):
             factor = randint(10, 30)
             cost -= factor
             high -= factor + randint(0, 5)

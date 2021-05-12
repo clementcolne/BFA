@@ -16,14 +16,14 @@ class TestStochastique(TestCase):
         sto.process(action1)
         action1.calculFinalNote()
 
-        self.assertTrue(action1.getFinalNote() == 0)
+        self.assertEqual(action1.getFinalNote(), 0)
 
         # Test 2
         action2.remplirGraph(ConfigTest.get_graph_hausse())
         sto.process(action2)
         action2.calculFinalNote()
 
-        self.assertTrue(action2.getFinalNote() == 0)
+        self.assertEqual(action2.getFinalNote(), 0)
 
         # Test 3
         action3.remplirGraph(ConfigTest.get_graph_hausse())
@@ -67,7 +67,7 @@ class TestStochastique(TestCase):
         sto.process(action1)
         action1.calculFinalNote()
 
-        self.assertTrue(action1.getFinalNote() == 0)
+        self.assertEqual(action1.getFinalNote(), 0)
 
     def test_process_change_for_hausse(self):
         action1 = Action("Test1")

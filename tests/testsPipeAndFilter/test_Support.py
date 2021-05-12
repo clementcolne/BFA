@@ -72,3 +72,23 @@ class TestSupport(TestCase):
 
         # Ne fonctionne pas selon les données du graph
         self.assertEqual(actionTest1.getFinalNote(), 0)
+
+    def test_process_change_for_hausse(self):
+        action1 = Action("Test1")
+        sup = Support()
+
+        action1.remplirGraph(ConfigTest.get_change_for_hausse())
+        sup.process(action1)
+        action1.calculFinalNote()
+
+        self.assertEqual(action1.getFinalNote(), 20)
+
+    def test_process_change_for_baisse(self):
+        action1 = Action("Test1")
+        sup = Support()
+
+        action1.remplirGraph(ConfigTest.get_change_for_baisse())
+        sup.process(action1)
+        action1.calculFinalNote()
+
+        self.assertEqual(action1.getFinalNote(), -20)

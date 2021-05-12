@@ -46,11 +46,11 @@ class OnBalanceVolume(Filtre):
 
         # Résultat des tests
         if p1 > 0 and p2 > 0:
-            action.addNote(10)
+            action.addNote(20)
         elif p1 > 0 and p2 < 0:
             action.addNote(10)
         elif p1 < 0 and p2 < 0:
-            action.addNote(-10)
+            action.addNote(-20)
         elif p1 < 0 and p2 > 0:
             action.addNote(-10)
         else:

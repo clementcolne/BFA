@@ -15,9 +15,8 @@ class Stochastique(Filtre):
         temp2 = list()
         haut = dict()
         bas = dict()
-        H = False
-        B = False
         p = 0
+        note = 0
 
         # On filtre les données qui servent à tracer la courbe et le stochastique
         for row in data:
@@ -47,17 +46,14 @@ class Stochastique(Filtre):
                 p += (temp[j] - temp[i]) / int((temp2[j] - temp2[i]).days)
         p = p / len(temp)
 
-        if p > 0:
-            H = True
-        elif p < 0:
-            B = True
-
         # On regarde si le stochastique est < 20% ou > 80%
-        if K[len(K) - 1] > 80 and B:
-            action.addNote(-10)
-        elif K[len(K) - 1] < 20 and H:
-            action.addNote(+10)
-        elif K[len(K) - 1] < 20 and B:
-            action.addNote(-10)
+        if K[len(K) - 1] > 80 and p < 0:
+            note -= 10
+        elif K[len(K) - 1] < 20 and p > 0:
+            note += 10
+        elif K[len(K) - 1] < 20 and p < 0:
+            note -= 10
         else:
-            action.addNote(0)
+            note += 0
+
+        action.addNote(note)

@@ -44,21 +44,21 @@ class TestMoyenneArithmetique(TestCase):
         ma.process(action1)
         action1.calculFinalNote()
 
-        self.assertTrue(action1.getFinalNote() != 0)
+        self.assertTrue(action1.getFinalNote() <= -10)
 
         # Test 2
         action2.remplirGraph(ConfigTest.get_graph_baisse())
         ma.process(action2)
         action2.calculFinalNote()
 
-        self.assertTrue(action2.getFinalNote() != 0)
+        self.assertTrue(action2.getFinalNote() <= -10)
 
         # Test 3
         action3.remplirGraph(ConfigTest.get_graph_baisse())
         ma.process(action3)
         action3.calculFinalNote()
 
-        self.assertTrue(action3.getFinalNote() != 0)
+        self.assertTrue(action3.getFinalNote() <= -10)
 
     def test_process_stable(self):
         action1 = Action("Test1")
@@ -82,21 +82,21 @@ class TestMoyenneArithmetique(TestCase):
         ma.process(action1)
         action1.calculFinalNote()
 
-        self.assertTrue(action1.getFinalNote() >= 20)
+        self.assertTrue(action1.getFinalNote() >= 0)
 
         # Test 2
         action2.remplirGraph(ConfigTest.get_change_for_hausse())
         ma.process(action2)
         action2.calculFinalNote()
 
-        self.assertTrue(action2.getFinalNote() >= 20)
+        self.assertTrue(action2.getFinalNote() >= 0)
 
         # Test 3
         action3.remplirGraph(ConfigTest.get_change_for_hausse())
         ma.process(action3)
         action3.calculFinalNote()
 
-        self.assertTrue(action3.getFinalNote() >= 20)
+        self.assertTrue(action3.getFinalNote() >= 0)
 
     def test_process_change_for_baisse(self):
         action1 = Action("Test1")
@@ -109,4 +109,4 @@ class TestMoyenneArithmetique(TestCase):
         ma.process(action1)
         action1.calculFinalNote()
 
-        self.assertTrue(action1.getFinalNote() != 0)
+        self.assertTrue(action1.getFinalNote() <= 0)

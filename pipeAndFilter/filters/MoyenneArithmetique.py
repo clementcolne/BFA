@@ -23,6 +23,7 @@ class MoyenneArithmetique(Filtre):
             for j in range(20):
                 sum += cost[i - j]['cout']
             mma20.append(sum / 20)
+            sum = 0
 
         # Calcul de la MMA50
         sum = 0
@@ -30,6 +31,7 @@ class MoyenneArithmetique(Filtre):
             for j in range(50):
                 sum += cost[i - j]['cout']
             mma50.append(sum / 50)
+            sum = 0
 
         # Test si la MMA20 > MMA50
         if mma20[len(mma20) - 1] > mma50[len(mma50) - 1]:
