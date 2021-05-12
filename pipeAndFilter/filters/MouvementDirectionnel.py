@@ -47,7 +47,7 @@ class MouvementDirectionnel(Filtre):
         # Calcul de la suite TRn
         for i in range(14):
             sum += tr[i]
-        tr14.append(sum/14)
+        tr14.append(sum / 14)
 
         for i in range(14, len(tr), 1):
             tr14.append((13 / 14) * tr14[14 - i] + tr[i])
@@ -71,7 +71,7 @@ class MouvementDirectionnel(Filtre):
             action.addNote(0)
             return
 
-        if dip[len(dip) - 1] > dim[len(dim) - 1]:
+        if dip[len(dip) - 1] > dim[len(dim) - 1]:  # DI+ > DI-, tendance haussière
             note += 20
             for i in range(10):
                 if adx[len(adx) - 1 - i] > adx[len(adx) - 2 - i]:
@@ -80,7 +80,7 @@ class MouvementDirectionnel(Filtre):
                     note -= 1
                 else:
                     note += 0
-        elif dip[len(dip) - 1] < dim[len(dim) - 1]:
+        elif dip[len(dip) - 1] < dim[len(dim) - 1]:  # DI- > DI+ tendance baissière
             note -= 20
             for i in range(10):
                 if adx[len(adx) - 1 - i] > adx[len(adx) - 2 - i]:

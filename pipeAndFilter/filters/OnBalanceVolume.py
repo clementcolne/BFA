@@ -21,6 +21,9 @@ class OnBalanceVolume(Filtre):
         obv.append(cost[0]['volume'])
 
         for i in range(1, len(cost), 1):
+            if (cost[i]['cout'] - cost[i - 1]['cout']) == 0:
+                action.addNote(0)
+                return
             obv.append(obv[len(obv) - 1] + (
                     (cost[i]['cout'] - cost[i - 1]['cout']) / abs(cost[i]['cout'] - cost[i - 1]['cout'])) * cost[i][
                            'volume'])

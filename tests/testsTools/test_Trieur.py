@@ -42,6 +42,24 @@ class TestTrieur(TestCase):
         self.assertTrue(trieur.actions[1] is action3)
         self.assertTrue(trieur.actions[2] is action1)
 
+        action4 = Action("SAO")
+        action4.addNote(-20)
+        action4.calculFinalNote()
+
+        action5 = Action("Nya")
+        action5.addNote(-5)
+        action5.calculFinalNote()
+
+        trieur.addAction(action4)
+        trieur.addAction(action5)
+
+        trieur.classer()
+        liste = trieur.get_list()
+
+        self.assertTrue(liste[0] is action4)
+        self.assertTrue(liste[1] is action5)
+        self.assertTrue(liste[4] is action1)
+
     def test_get_list(self):
         action1 = Action("ALO")
         action2 = Action("COQ")
@@ -55,4 +73,4 @@ class TestTrieur(TestCase):
 
         liste = trieur.get_list()
 
-        self.assertTrue(liste is not None)
+        self.assertTrue(liste is not None and len(liste) == 3)

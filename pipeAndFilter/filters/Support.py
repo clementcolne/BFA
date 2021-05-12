@@ -13,14 +13,14 @@ class Support(Filtre):
         clotureData = list()
 
         # On filtre les données pour ne garder que les coûts de clotures qui servent à tracer la courbe
-        for row in data:
-            clotureData.append({'date': row['date'], 'cout': row['data'][3]})
+        for i in range(30, 0, -1):
+            clotureData.append({'date': data[len(data) - 1 - i]['date'], 'cout': data[len(data) - 1 - i]['data'][3]})
 
         # Récupération des points les plus bas de la courbe
         copie = copy.deepcopy(clotureData)
         maxs = list()
 
-        for i in range(5):
+        for i in range(10):
             maxs.append(min(copie, key=itemgetter('cout')))
             copie.remove(maxs[len(maxs) - 1])
         maxs = sorted(maxs, key=itemgetter('date'))

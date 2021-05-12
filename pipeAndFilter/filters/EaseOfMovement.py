@@ -25,6 +25,9 @@ class EaseOfMovement(Filtre):
             distance = (((data[i]['data'][1] + data[i]['data'][2]) / 2) - (
                         (data[i - 1]['data'][1] + data[i - 1]['data'][2]) / 2))
             box = data[i]['data'][4] / (data[i]['data'][1] - data[i]['data'][2])
+            if distance/box == 0:
+                action.addNote(0)
+                return
             emv.append((distance/box)*10000)
 
         # Calcul de l'EMV(14) //moyenne mobile sur 14 jours de l'EMV
