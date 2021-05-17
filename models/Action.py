@@ -46,5 +46,13 @@ class Action:
     def remplirGraph(self, donnees):
         self.graph.remplirGraph(donnees)
 
+    """Fonction pour récupérer les données du graph"""
     def getGraphData(self):
         return self.graph.getData()
+
+    """Fonction pour récupérer le nom de l'action"""
+    def getNom(self):
+        if self.nom.__contains__("'"):
+            name = self.nom.split("'")
+            return name[0] + "''" + name[1]
+        return self.nom
