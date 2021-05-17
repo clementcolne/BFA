@@ -52,19 +52,23 @@ class MouvementDirectionnel(Filtre):
         for i in range(14, len(tr), 1):
             tr14.append((13 / 14) * tr14[14 - i] + tr[i])
 
-        # Calcul des DI+ et DI-
-        for i in range(len(tr14)):
-            dip.append((dm14p[i] / tr14[i]) * 100)
-            dim.append((dm14m[i] / tr14[i]) * 100)
+        try:
+            # Calcul des DI+ et DI-
+            for i in range(len(tr14)):
+                dip.append((dm14p[i] / tr14[i]) * 100)
+                dim.append((dm14m[i] / tr14[i]) * 100)
 
-        # Calcul de l'ADX
-        sum = 0
-        for i in range(14, 27, 1):
-            sum += floor((abs(dip[i] - dim[i]) / (dip[i] + dim[i])) * 100)
-        adx.append((1 / 14) * sum)
+            # Calcul de l'ADX
+            sum = 0
+            for i in range(14, 27, 1):
+                sum += floor((abs(dip[i] - dim[i]) / (dip[i] + dim[i])) * 100)
+            adx.append((1 / 14) * sum)
 
-        for i in range(15, len(dip), 1):
-            adx.append((13 * adx[i - 15] + floor((abs(dip[i] - dim[i]) / (dip[i] + dim[i])) * 100)) / 14)
+            for i in range(15, len(dip), 1):
+                adx.append((13 * adx[i - 15] + floor((abs(dip[i] - dim[i]) / (dip[i] + dim[i])) * 100)) / 14)
+        except ZeroDivisionError:
+            action.addNote(0)
+            return
 
         # Calcul de la note à donner à l'action
         if adx[len(adx) - 1] < 25:

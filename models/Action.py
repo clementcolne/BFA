@@ -56,3 +56,8 @@ class Action:
             name = self.nom.split("'")
             return name[0] + "''" + name[1]
         return self.nom
+
+    """Procédure de ré-initialisation des notes"""
+    def resetNote(self):
+        self.notes.clear()
+        self.finalNote = 0

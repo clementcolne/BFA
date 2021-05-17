@@ -1,4 +1,5 @@
 import datetime
+import copy
 
 from flask import Flask
 from flask import jsonify
@@ -52,6 +53,10 @@ def test():
 @app.route('/testAlgo')
 def test_algo():
     actions = list()
+    donnees = list()
+    classement = list()
+    dateDebut = datetime.date(2020, 1, 1)
+    dateDebutData = dateDebut - datetime.timedelta(days=200)
 
     # Requête à la base de données pour récupérer les différentes actions et les instancier
     cursor = mysql.connection.cursor()
@@ -59,10 +64,6 @@ def test_algo():
     cursor.execute(req)
     data = cursor.fetchall()
     cursor.close()
-    donnees = list()
-    classement = list()
-    dateDebut = datetime.date(2020, 1, 1)
-    dateDebutData = dateDebut - datetime.timedelta(days=200)
 
     for row in data:
         actions.append(Action(row[0]))
@@ -70,36 +71,43 @@ def test_algo():
 
     # Boucle de test d'achat-vente sur une certaine période
     for i in range(30):
+        # Jour suivant, reset des données
+        dateDebutData = dateDebutData + datetime.timedelta(days=1)
+        dateDebut = dateDebut + datetime.timedelta(days=1)
+        classement.clear()
+        for action in actions:
+            action.resetNote()
 
         # Requête à la base de données pour récupérer les informations des actions
-        for j in actions:
+        for j in range(len(actions)):
             cursor = mysql.connection.cursor()
-            req = "SELECT * FROM days JOIN action USING(idAction) WHERE name like '%" + j.getNom() + "%' and date between '" + dateDebutData.isoformat() + "' and '" + dateDebut.isoformat() + "'"
+            req = "SELECT * FROM days JOIN action USING(idAction) WHERE name like '%" + actions[
+                j].getNom() + "%' and date between '" + dateDebutData.isoformat() + "' and '" + dateDebut.isoformat() + "'"
             cursor.execute(req)
             data = cursor.fetchall()
             cursor.close()
-
-            print("data : ", len(data))
 
             # On remplit le dictionnaire des données de l'action sur la période considérée
             for row in data:
                 donnees.append({'date': row[1], 'data': [row[2], row[3], row[4], row[5], row[6]]})
                 # Data : OpeningPrice, TopPrice, BottomPrice, ClosingPrice, Volume
 
-            j.remplirGraph(donnees)
-            print("donnees : ", len(donnees))
+            actions[j].remplirGraph(copy.deepcopy(donnees))
             donnees.clear()
 
         # Application du pipeline sur les actions
-        for j in actions:
-            Algorithme.Notation(j)
+        for j in range(len(actions)):
+            Algorithme.Notation(actions[j])
 
         # Tri des actions
         trieur = Trieur(actions)
         trieur.classer()
-        classement = trieur.get_list()
+        # classement = trieur.get_list()
+        for action in trieur.get_list():
+            classement.append({'Nom': action.nom, 'Note': action.getFinalNote()})
 
         # Stratégie achat-vente
+
     return jsonify(classement)
 
 
