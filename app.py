@@ -57,6 +57,8 @@ def test_algo():
     classement = list()
     dateDebut = datetime.date(2020, 1, 1)
     dateDebutData = dateDebut - datetime.timedelta(days=200)
+    wallet = {'cash': 1000, 'actions': [], 'prixAchat': [], 'nb': []}
+    resum = ""
 
     # Requête à la base de données pour récupérer les différentes actions et les instancier
     cursor = mysql.connection.cursor()
@@ -102,13 +104,54 @@ def test_algo():
         # Tri des actions
         trieur = Trieur(actions)
         trieur.classer()
-        # classement = trieur.get_list()
         for action in trieur.get_list():
             classement.append({'Nom': action.nom, 'Note': action.getFinalNote()})
 
         # Stratégie achat-vente
+        k = 0
+        resum = resum + dateDebut.isoformat() + "<br/>"
 
-    return jsonify(classement)
+        # Vente des actions qui perdent de la valeur
+        while k < len(wallet['actions']):
+            if wallet['actions'][k].getFinalNote() < 0:
+                wallet['cash'] += wallet['nb'][k] * \
+                                  wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1][
+                                      'data'][3]
+
+                resum = resum + "Vente des actions " + wallet['actions'][k].getNom() + "<br/>"
+                wallet['nb'].pop(k)
+                wallet['prixAchat'].pop(k)
+                wallet['actions'].remove(wallet['actions'][k])
+            else:
+                k += 1
+
+        nbAchats = 10 - len(wallet['actions'])
+        achats = 0
+        k = 0
+        # Achat d'action qui prenne de la valeur
+        while achats < nbAchats and k < 40:
+            if not (trieur.get_list()[k] in wallet['actions']):
+                nbActions = 0
+                while (nbActions *
+                       trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][
+                           0]) < 100 and (nbActions *
+                       trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][
+                           0]) < wallet['cash']:
+                    nbActions += 1
+                if nbActions > 0:
+                    wallet['actions'].append(trieur.get_list()[k])
+                    wallet['prixAchat'].append(
+                        trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][0])
+                    wallet['nb'].append(nbActions)
+                    wallet['cash'] -= nbActions * trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][0]
+
+                    nbAchats += 1
+                    resum = resum + "Achat de " + nbActions.__str__() + " actions de " + trieur.get_list()[k].getNom() + "<br/>"
+            k += 1
+        resum = resum + "<br/>"
+
+    # return jsonify(classement)
+    return resum
 
 
 if __name__ == '__main__':
