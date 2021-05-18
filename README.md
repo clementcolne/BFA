@@ -11,7 +11,10 @@ A la fin de l'algorithme de notation, les actions sont classées par ordre décr
 Pour exécuter les fichiers de tests en local, il faut juste lancer l'exécution du fichier voulu : "run unittest in file"
 
 Pour exécuter le fichier principal app.py, il faut un environnement web avec localhost et la base de donnée de l'API. *La fonction principale de l'API qui fera appel à l'algorithme n'est pas encore implémenté !*
-Une fois l'environnement prêt, il suffit de lancer l'application en local, celle-ci doit s'ouvrir dans le localhost. Puis on ajoute à l'url le chemin qui permet d'exécuter la fonction principale, et celle-ci retournera le résultat de l'algorithme sous la forme d'un fichier JSON.
+Une fois l'environnement prêt, il suffit de lancer l'application en local, celle-ci doit s'ouvrir dans le localhost.
+Puis on ajoute à l'url le chemin qui permet d'exécuter la fonction souhaitée.
+La fonction test retourne le résultat de simulation sous forme texte dans le navigateur.
+La fonction principale de l'API retourne le résultat de l'algorithme sous la forme d'un fichier JSON.
 
 ###Package Python nécessaire à l'API
 * flask

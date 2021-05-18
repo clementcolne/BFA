@@ -72,7 +72,7 @@ def test_algo():
     actions.remove(actions[0])  # Retire la première ligne qui contient les noms des colonnes
 
     # Boucle de test d'achat-vente sur une certaine période
-    for i in range(30):
+    for i in range(365):
         # Jour suivant, reset des données
         dateDebutData = dateDebutData + datetime.timedelta(days=1)
         dateDebut = dateDebut + datetime.timedelta(days=1)
@@ -130,7 +130,7 @@ def test_algo():
         k = 0
         # Achat d'action qui prenne de la valeur
         while achats < nbAchats and k < 40:
-            if not (trieur.get_list()[k] in wallet['actions']):
+            if not (trieur.get_list()[k] in wallet['actions']) and (trieur.get_list()[k].getFinalNote() > 0):
                 nbActions = 0
                 while (nbActions *
                        trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][
@@ -148,6 +148,16 @@ def test_algo():
                     nbAchats += 1
                     resum = resum + "Achat de " + nbActions.__str__() + " actions de " + trieur.get_list()[k].getNom() + "<br/>"
             k += 1
+
+        # Valorisatin et pourcentage gain/perte
+        val = wallet['cash']
+        for j in range(len(wallet['actions'])):
+            val += wallet['nb'][j] * wallet['actions'][j].getGraphData()[len(wallet['actions'][j].getGraphData())-1]['data'][3]
+        gain = (val - 1000)/1000*100
+
+        resum = resum + "Valorisation à la fin de la journée : " + "{:.2f}".format(val) + "€<br/>"
+        resum = resum + "Pourcentage gain/perte depuis le début : " + "{:.2f}".format(gain) + "%<br/>"
+
         resum = resum + "<br/>"
 
     # return jsonify(classement)
