@@ -55,9 +55,9 @@ def test_algo():
     actions = list()
     donnees = list()
     classement = list()
-    dateDebut = datetime.date(2020, 1, 1)
+    dateDebut = datetime.date(2020, 11, 22)
     dateDebutData = dateDebut - datetime.timedelta(days=200)
-    wallet = {'cash': 1000, 'actions': [], 'prixAchat': [], 'nb': []}
+    wallet = {'cash': 10000, 'actions': [], 'prixAchat': [], 'nb': []}
     resum = ""
 
     # Requête à la base de données pour récupérer les différentes actions et les instancier
@@ -72,7 +72,7 @@ def test_algo():
     actions.remove(actions[0])  # Retire la première ligne qui contient les noms des colonnes
 
     # Boucle de test d'achat-vente sur une certaine période
-    for i in range(365):
+    for i in range(7):
         # Jour suivant, reset des données
         dateDebutData = dateDebutData + datetime.timedelta(days=1)
         dateDebut = dateDebut + datetime.timedelta(days=1)
@@ -128,13 +128,14 @@ def test_algo():
         nbAchats = 10 - len(wallet['actions'])
         achats = 0
         k = 0
-        # Achat d'action qui prenne de la valeur
+        borne = wallet['cash']/nbAchats
+        # Achat d'action qui prennent de la valeur
         while achats < nbAchats and k < 40:
             if not (trieur.get_list()[k] in wallet['actions']) and (trieur.get_list()[k].getFinalNote() > 0):
                 nbActions = 0
                 while (nbActions *
                        trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][
-                           0]) < 100 and (nbActions *
+                           0]) <= borne and (nbActions *
                        trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][
                            0]) < wallet['cash']:
                     nbActions += 1
@@ -153,7 +154,7 @@ def test_algo():
         val = wallet['cash']
         for j in range(len(wallet['actions'])):
             val += wallet['nb'][j] * wallet['actions'][j].getGraphData()[len(wallet['actions'][j].getGraphData())-1]['data'][3]
-        gain = (val - 1000)/1000*100
+        gain = (val - 10000)/10000*100
 
         resum = resum + "Valorisation à la fin de la journée : " + "{:.2f}".format(val) + "€<br/>"
         resum = resum + "Pourcentage gain/perte depuis le début : " + "{:.2f}".format(gain) + "%<br/>"
