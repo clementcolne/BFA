@@ -55,7 +55,7 @@ def test_algo():
     actions = list()
     donnees = list()
     classement = list()
-    dateDebut = datetime.date(2020, 11, 22)
+    dateDebut = datetime.date(2020, 12, 20)
     dateDebutData = dateDebut - datetime.timedelta(days=200)
     wallet = {'cash': 10000, 'actions': [], 'prixAchat': [], 'nb': []}
     resum = ""
@@ -111,12 +111,12 @@ def test_algo():
         k = 0
         resum = resum + dateDebut.isoformat() + "<br/>"
 
-        # Vente des actions qui perdent de la valeur
+        #Stop-loss, vente des actions dont le prix chute sous 5% de la valeur d'achat
         while k < len(wallet['actions']):
-            if wallet['actions'][k].getFinalNote() < 0:
+            if wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][2] <= (wallet['prixAchat'][k] - wallet['prixAchat'][k]*(5/100)):
                 wallet['cash'] += wallet['nb'][k] * \
                                   wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1][
-                                      'data'][3]
+                                      'data'][2]
 
                 resum = resum + "Vente des actions " + wallet['actions'][k].getNom() + "<br/>"
                 wallet['nb'].pop(k)
@@ -125,12 +125,29 @@ def test_algo():
             else:
                 k += 1
 
+        k = 0
+        # Vente des actions qui perdent de la valeur en fin de semaine
+        if dateDebut.strftime('%A') == "Friday":
+            while k < len(wallet['actions']):
+                if wallet['prixAchat'][k] > wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][3]:
+                    wallet['cash'] += wallet['nb'][k] * \
+                                      wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1][
+                                          'data'][3]
+
+                    resum = resum + "Vente des actions " + wallet['actions'][k].getNom() + "<br/>"
+                    wallet['nb'].pop(k)
+                    wallet['prixAchat'].pop(k)
+                    wallet['actions'].remove(wallet['actions'][k])
+                else:
+                    k += 1
+
         nbAchats = 10 - len(wallet['actions'])
         achats = 0
         k = 0
-        borne = wallet['cash']/nbAchats
+        if nbAchats != 0:
+            borne = wallet['cash']/nbAchats
         # Achat d'action qui prennent de la valeur
-        while achats < nbAchats and k < 40:
+        while achats < nbAchats and k < 40 and (dateDebut.strftime('%A') not in ["Friday", "Saturday", "Sunday"]):
             if not (trieur.get_list()[k] in wallet['actions']) and (trieur.get_list()[k].getFinalNote() > 0):
                 nbActions = 0
                 while (nbActions *
