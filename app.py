@@ -45,11 +45,6 @@ def display_graph_data():
     return jsonify(action.getGraphData())
 
 
-@app.route('/test')
-def test():
-    return
-
-
 @app.route('/testAlgo')
 def test_algo():
     actions = list()
@@ -111,9 +106,10 @@ def test_algo():
         k = 0
         resum = resum + dateDebut.isoformat() + "<br/>"
 
-        #Stop-loss, vente des actions dont le prix chute sous 5% de la valeur d'achat
+        # Stop-loss, vente des actions dont le prix chute sous 5% de la valeur d'achat
         while k < len(wallet['actions']):
-            if wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][2] <= (wallet['prixAchat'][k] - wallet['prixAchat'][k]*(5/100)):
+            if wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][2] <= (
+                    wallet['prixAchat'][k] - wallet['prixAchat'][k] * (5 / 100)):
                 wallet['cash'] += wallet['nb'][k] * \
                                   wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1][
                                       'data'][2]
@@ -129,7 +125,8 @@ def test_algo():
         # Vente des actions qui perdent de la valeur en fin de semaine
         if dateDebut.strftime('%A') == "Friday":
             while k < len(wallet['actions']):
-                if wallet['prixAchat'][k] > wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][3]:
+                if wallet['prixAchat'][k] > \
+                        wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][3]:
                     wallet['cash'] += wallet['nb'][k] * \
                                       wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1][
                                           'data'][3]
@@ -145,33 +142,42 @@ def test_algo():
         achats = 0
         k = 0
         if nbAchats != 0:
-            borne = wallet['cash']/nbAchats
+            borne = wallet['cash'] / nbAchats
         # Achat d'action qui prennent de la valeur
         while achats < nbAchats and k < 40 and (dateDebut.strftime('%A') not in ["Friday", "Saturday", "Sunday"]):
             if not (trieur.get_list()[k] in wallet['actions']) and (trieur.get_list()[k].getFinalNote() > 0):
                 nbActions = 0
+
+                # Calcul du nombre de titre à acheter
                 while (nbActions *
                        trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][
                            0]) <= borne and (nbActions *
-                       trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][
-                           0]) < wallet['cash']:
+                                             trieur.get_list()[k].getGraphData()[
+                                                 len(trieur.get_list()[k].getGraphData()) - 1]['data'][
+                                                 0]) < wallet['cash']:
                     nbActions += 1
+
                 if nbActions > 0:
+                    # Ajout des titres achetés au portefeuille
                     wallet['actions'].append(trieur.get_list()[k])
                     wallet['prixAchat'].append(
                         trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][0])
                     wallet['nb'].append(nbActions)
-                    wallet['cash'] -= nbActions * trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][0]
+                    wallet['cash'] -= nbActions * \
+                                      trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1][
+                                          'data'][0]
 
                     nbAchats += 1
-                    resum = resum + "Achat de " + nbActions.__str__() + " actions de " + trieur.get_list()[k].getNom() + "<br/>"
+                    resum = resum + "Achat de " + nbActions.__str__() + " actions de " + trieur.get_list()[
+                        k].getNom() + "<br/>"
             k += 1
 
         # Valorisatin et pourcentage gain/perte
         val = wallet['cash']
         for j in range(len(wallet['actions'])):
-            val += wallet['nb'][j] * wallet['actions'][j].getGraphData()[len(wallet['actions'][j].getGraphData())-1]['data'][3]
-        gain = (val - 10000)/10000*100
+            val += wallet['nb'][j] * \
+                   wallet['actions'][j].getGraphData()[len(wallet['actions'][j].getGraphData()) - 1]['data'][3]
+        gain = (val - 10000) / 10000 * 100
 
         resum = resum + "Valorisation à la fin de la journée : " + "{:.2f}".format(val) + "€<br/>"
         resum = resum + "Pourcentage gain/perte depuis le début : " + "{:.2f}".format(gain) + "%<br/>"
@@ -180,6 +186,55 @@ def test_algo():
 
     # return jsonify(classement)
     return resum
+
+
+@app.route('/main')
+def main():
+    actions = list()
+    donnees = list()
+    classement = list()
+    dateDebut = datetime.date.today()
+    dateDebutData = dateDebut - datetime.timedelta(days=200)
+
+    # Requête à la base de données pour récupérer les différentes actions et les instancier
+    cursor = mysql.connection.cursor()
+    req = "SELECT name FROM action"
+    cursor.execute(req)
+    data = cursor.fetchall()
+    cursor.close()
+
+    for row in data:
+        actions.append(Action(row[0]))
+    actions.remove(actions[0])  # Retire la première ligne qui contient les noms des colonnes
+
+    # Requête à la base de données pour récupérer les informations des actions
+    for i in range(len(actions)):
+        cursor = mysql.connection.cursor()
+        req = "SELECT * FROM days JOIN action USING(idAction) WHERE name like '%" + actions[
+            i].getNom() + "%' and date between '" + dateDebutData.isoformat() + "' and '" + dateDebut.isoformat() + "'"
+        cursor.execute(req)
+        data = cursor.fetchall()
+        cursor.close()
+
+        # On remplit le dictionnaire des données de l'action sur la période considérée
+        for row in data:
+            donnees.append({'date': row[1], 'data': [row[2], row[3], row[4], row[5], row[6]]})
+            # Data : OpeningPrice, TopPrice, BottomPrice, ClosingPrice, Volume
+
+        actions[i].remplirGraph(copy.deepcopy(donnees))
+        donnees.clear()
+
+    # Application du pipeline sur les actions
+    for i in range(len(actions)):
+        Algorithme.Notation(actions[i])
+
+    # Tri des actions
+    trieur = Trieur(actions)
+    trieur.classer()
+    for action in trieur.get_list():
+        classement.append({'Nom': action.nom, 'Note': action.getFinalNote()})
+
+    return jsonify(classement)
 
 
 if __name__ == '__main__':
