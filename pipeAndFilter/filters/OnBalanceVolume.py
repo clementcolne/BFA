@@ -45,7 +45,8 @@ class OnBalanceVolume(Filtre):
 
         for i in range(len(tmp) - 1):
             for j in range(i + 1, len(tmp), 1):
-                p2 += (tmp[j] - tmp[i]) / int((cost[len(cost) - 20 + j]['date'] - cost[len(cost) - 20 + i]['date']).days)
+                if cost[len(cost) - 20 + j]['date'] != cost[len(cost) - 20 + i]['date']:
+                    p2 += (tmp[j] - tmp[i]) / int((cost[len(cost) - 20 + j]['date'] - cost[len(cost) - 20 + i]['date']).days)
         p2 = p2 / len(tmp)
 
         # Résultat des tests

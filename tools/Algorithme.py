@@ -13,6 +13,9 @@ class Algorithme:
     """Procédure statique qui applique le pipe and filter à une action"""
     @staticmethod
     def Notation(action):
+        if len(action.getGraphData()) == 0:
+            return
+
         # Création du pipeline
         pipe = Pipeline()
 

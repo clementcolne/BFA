@@ -4,6 +4,7 @@ from flask_mysqldb import MySQL
 
 class Action:
     nom: str
+    symbol = str
     graph: Graph
     notes: []
     finalNote: int
@@ -61,3 +62,9 @@ class Action:
     def resetNote(self):
         self.notes.clear()
         self.finalNote = 0
+
+    def addSymbol(self, s):
+        self.symbol = s
+
+    def getSymbol(self):
+        return self.symbol

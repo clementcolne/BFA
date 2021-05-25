@@ -44,7 +44,8 @@ class Stochastique(Filtre):
         # On calcule la pente de K sur les derniers jours
         for i in range(len(temp) - 1):
             for j in range(i + 1, len(temp), 1):
-                p += (temp[j] - temp[i]) / int((temp2[j] - temp2[i]).days)
+                if temp2[j] != temp2[i]:
+                    p += (temp[j] - temp[i]) / int((temp2[j] - temp2[i]).days)
         p = p / len(temp)
 
         # On regarde si le stochastique est < 20% ou > 80%

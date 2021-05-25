@@ -1,5 +1,6 @@
 import datetime
 import copy
+import yfinance as yf
 
 from flask import Flask
 from flask import jsonify
@@ -50,24 +51,25 @@ def test_algo():
     actions = list()
     donnees = list()
     classement = list()
-    dateDebut = datetime.date(2020, 12, 20)
-    dateDebutData = dateDebut - datetime.timedelta(days=200)
+    dateDebut = datetime.date(2020, 1, 1)
+    dateDebutData = dateDebut - datetime.timedelta(days=365)
     wallet = {'cash': 10000, 'actions': [], 'prixAchat': [], 'nb': []}
     resum = ""
 
     # Requête à la base de données pour récupérer les différentes actions et les instancier
     cursor = mysql.connection.cursor()
-    req = "SELECT name FROM action"
+    req = "SELECT name, symbol FROM action"
     cursor.execute(req)
     data = cursor.fetchall()
     cursor.close()
 
     for row in data:
         actions.append(Action(row[0]))
+        actions[len(actions) - 1].addSymbol(row[1])
     actions.remove(actions[0])  # Retire la première ligne qui contient les noms des colonnes
 
     # Boucle de test d'achat-vente sur une certaine période
-    for i in range(7):
+    for i in range(30):
         # Jour suivant, reset des données
         dateDebutData = dateDebutData + datetime.timedelta(days=1)
         dateDebut = dateDebut + datetime.timedelta(days=1)
@@ -92,6 +94,18 @@ def test_algo():
             actions[j].remplirGraph(copy.deepcopy(donnees))
             donnees.clear()
 
+        """for action in actions:
+            # Récupération des données de l'action sur un an
+            graph = yf.Ticker(action.getSymbol() + ".PA").history(start=dateDebutData, end=dateDebut, interval="1d")
+
+            # Tri des données utiles dans une liste de dictionnaires
+            for row in graph.itertuples():
+                donnees.append({'date': row[0], 'data': [row[1], row[2], row[3], row[4], row[5]]})
+                # Data : OpeningPrice, TopPrice, BottomPrice, ClosingPrice, Volume
+
+            action.remplirGraph(copy.deepcopy(donnees))
+            donnees.clear()"""
+
         # Application du pipeline sur les actions
         for j in range(len(actions)):
             Algorithme.Notation(actions[j])
@@ -107,7 +121,7 @@ def test_algo():
         resum = resum + dateDebut.isoformat() + "<br/>"
 
         # Stop-loss, vente des actions dont le prix chute sous 5% de la valeur d'achat
-        while k < len(wallet['actions']):
+        """while k < len(wallet['actions']):
             if wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][2] <= (
                     wallet['prixAchat'][k] - wallet['prixAchat'][k] * (5 / 100)):
                 wallet['cash'] += wallet['nb'][k] * \
@@ -119,7 +133,7 @@ def test_algo():
                 wallet['prixAchat'].pop(k)
                 wallet['actions'].remove(wallet['actions'][k])
             else:
-                k += 1
+                k += 1"""
 
         k = 0
         # Vente des actions qui perdent de la valeur en fin de semaine
@@ -193,35 +207,30 @@ def main():
     actions = list()
     donnees = list()
     classement = list()
-    dateDebut = datetime.date.today()
-    dateDebutData = dateDebut - datetime.timedelta(days=200)
 
     # Requête à la base de données pour récupérer les différentes actions et les instancier
     cursor = mysql.connection.cursor()
-    req = "SELECT name FROM action"
+    req = "SELECT name, symbol FROM action"
     cursor.execute(req)
     data = cursor.fetchall()
     cursor.close()
 
     for row in data:
         actions.append(Action(row[0]))
+        actions[len(actions) - 1].addSymbol(row[1])
     actions.remove(actions[0])  # Retire la première ligne qui contient les noms des colonnes
 
-    # Requête à la base de données pour récupérer les informations des actions
-    for i in range(len(actions)):
-        cursor = mysql.connection.cursor()
-        req = "SELECT * FROM days JOIN action USING(idAction) WHERE name like '%" + actions[
-            i].getNom() + "%' and date between '" + dateDebutData.isoformat() + "' and '" + dateDebut.isoformat() + "'"
-        cursor.execute(req)
-        data = cursor.fetchall()
-        cursor.close()
+    # Récupération des données
+    for action in actions:
+        # Récupération des données de l'action sur un an
+        graph = yf.Ticker(action.getSymbol() + ".PA").history(period="1y", interval="1d")
 
-        # On remplit le dictionnaire des données de l'action sur la période considérée
-        for row in data:
-            donnees.append({'date': row[1], 'data': [row[2], row[3], row[4], row[5], row[6]]})
+        # Tri des données utiles dans une liste de dictionnaires
+        for row in graph.itertuples():
+            donnees.append({'date': row[0], 'data': [row[1], row[2], row[3], row[4], row[5]]})
             # Data : OpeningPrice, TopPrice, BottomPrice, ClosingPrice, Volume
 
-        actions[i].remplirGraph(copy.deepcopy(donnees))
+        action.remplirGraph(copy.deepcopy(donnees))
         donnees.clear()
 
     # Application du pipeline sur les actions
@@ -235,6 +244,39 @@ def main():
         classement.append({'Nom': action.nom, 'Note': action.getFinalNote()})
 
     return jsonify(classement)
+
+
+@app.route('/testData')
+def testData():
+    actions = list()
+    donnees = list()
+
+    # Requête à la base de données pour récupérer les différentes actions et les instancier
+    cursor = mysql.connection.cursor()
+    req = "SELECT name, symbol FROM action"
+    cursor.execute(req)
+    data = cursor.fetchall()
+    cursor.close()
+
+    for row in data:
+        actions.append(Action(row[0]))
+        actions[len(actions) - 1].addSymbol(row[1])
+    actions.remove(actions[0])  # Retire la première ligne qui contient les noms des colonnes
+
+    # Récupération des données
+    for action in actions:
+        # Récupération des données de l'action sur un an
+        graph = yf.Ticker(action.getSymbol() + ".PA").history(period="1y", interval="1d")
+
+        # Tri des données utiles dans une liste de dictionnaires
+        for row in graph.itertuples():
+            donnees.append({'date': row[0], 'data': [row[1], row[2], row[3], row[4], row[5]]})
+            # Data : OpeningPrice, TopPrice, BottomPrice, ClosingPrice, Volume
+
+        action.remplirGraph(copy.deepcopy(donnees))
+        donnees.clear()
+
+    return jsonify(actions[len(actions) - 1].getGraphData())
 
 
 if __name__ == '__main__':
