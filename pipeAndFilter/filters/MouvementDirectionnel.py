@@ -35,8 +35,8 @@ class MouvementDirectionnel(Filtre):
 
         # Calcul des suites DMn+ et DMn-
         for i in range(14, len(dmp), 1):
-            dm14p.append((13 / 14) * dm14p[i - 14] + dmp[i])
-            dm14m.append((13 / 14) * dm14m[i - 14] + dmm[i])
+            dm14p.append((13 / 14) * dm14p[14 - i] + dmp[i])
+            dm14m.append((13 / 14) * dm14m[14 - i] + dmm[i])
 
         # Calcul des TR
         for i in range(1, len(data), 1):
@@ -50,7 +50,7 @@ class MouvementDirectionnel(Filtre):
         tr14.append(sum / 14)
 
         for i in range(14, len(tr), 1):
-            tr14.append((13 / 14) * tr14[i - 14] + tr[i])
+            tr14.append((13 / 14) * tr14[14 - i] + tr[i])
 
         try:
             # Calcul des DI+ et DI-

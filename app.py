@@ -51,9 +51,16 @@ def test_algo():
     actions = list()
     donnees = list()
     classement = list()
-    dateDebut = datetime.date(2020, 1, 1)
-    dateDebutData = dateDebut - datetime.timedelta(days=365)
-    wallet = {'cash': 10000, 'actions': [], 'prixAchat': [], 'nb': []}
+    dateDebut = datetime.date(2020, 2, 1)
+    dateDebutData = dateDebut - datetime.timedelta(days=200)
+    wallet = {'cash': 10000, 'actions': [], 'prixAchat': [], 'nb': [], 'dateAchat': []}
+    nbTransaction = 0
+    nbJourPossession = []
+    possessionMoyenne = 0
+    gainTransaction = []
+    gainMoyen = 0
+    gagnante = 0
+    perdante = 0
     resum = ""
 
     # Requête à la base de données pour récupérer les différentes actions et les instancier
@@ -146,9 +153,19 @@ def test_algo():
                                           'data'][3]
 
                     resum = resum + "Vente des actions " + wallet['actions'][k].getNom() + "<br/>"
+
+                    nbJourPossession.append((dateDebut - wallet['dateAchat'][k]).days)
+                    if wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][3] - wallet['prixAchat'][k] > 0:
+                        gagnante += 1
+                    else:
+                        perdante += 1
+                    gainTransaction.append(wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][3] - wallet['prixAchat'][k])
+
                     wallet['nb'].pop(k)
                     wallet['prixAchat'].pop(k)
+                    wallet['dateAchat'].pop(k)
                     wallet['actions'].remove(wallet['actions'][k])
+                    nbTransaction += 1
                 else:
                     k += 1
 
@@ -177,11 +194,13 @@ def test_algo():
                     wallet['prixAchat'].append(
                         trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][0])
                     wallet['nb'].append(nbActions)
+                    wallet['dateAchat'].append(dateDebut)
                     wallet['cash'] -= nbActions * \
                                       trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1][
                                           'data'][0]
 
                     nbAchats += 1
+                    nbTransaction += 1
                     resum = resum + "Achat de " + nbActions.__str__() + " actions de " + trieur.get_list()[
                         k].getNom() + "<br/>"
             k += 1
@@ -193,8 +212,27 @@ def test_algo():
                    wallet['actions'][j].getGraphData()[len(wallet['actions'][j].getGraphData()) - 1]['data'][3]
         gain = (val - 10000) / 10000 * 100
 
+        # Statistique moyenne sur le nombre de jour de possession d'une action et le gain moyen des transactions
+        if len(nbJourPossession) != 0:
+            for j in range(len(nbJourPossession)):
+                possessionMoyenne += nbJourPossession[j]
+            possessionMoyenne = possessionMoyenne / len(nbJourPossession)
+
+        if len(gainTransaction) != 0:
+            for j in range(len(gainTransaction)):
+                gainMoyen += gainTransaction[j]
+            gainMoyen = gainMoyen/len(gainTransaction)
+
+        # Résumé des statistiques pour affichage
         resum = resum + "Valorisation à la fin de la journée : " + "{:.2f}".format(val) + "€<br/>"
         resum = resum + "Pourcentage gain/perte depuis le début : " + "{:.2f}".format(gain) + "%<br/>"
+        resum = resum + "Nombre de transaction depuis le début : " + "{:.2f}".format(nbTransaction) + "<br/>"
+        resum = resum + "Gain moyen par transaction : " + "{:.2f}".format(gainMoyen) + "<br/>"
+        resum = resum + "Nombre de transaction gagnante : " + "{:.2f}".format(
+            gagnante) + ", Nombre de transaction perdante " \
+                        ": " + "{:.2f}".format(perdante) + \
+                "<br/> "
+        resum = resum + "Nombre de jour moyen de possession : " + "{:.2f}".format(possessionMoyenne) + "<br/>"
 
         resum = resum + "<br/>"
 
