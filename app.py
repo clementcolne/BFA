@@ -51,9 +51,11 @@ def test_algo():
     actions = list()
     donnees = list()
     classement = list()
-    dateDebut = datetime.date(2020, 2, 1)
+    dateDebut = datetime.date(2018, 12, 1)
     dateDebutData = dateDebut - datetime.timedelta(days=200)
     wallet = {'cash': 10000, 'actions': [], 'prixAchat': [], 'nb': [], 'dateAchat': []}
+    cloture = 0
+    ouverture = 0
     nbTransaction = 0
     nbJourPossession = []
     possessionMoyenne = 0
@@ -146,20 +148,19 @@ def test_algo():
         # Vente des actions qui perdent de la valeur en fin de semaine
         if dateDebut.strftime('%A') == "Friday":
             while k < len(wallet['actions']):
-                if wallet['prixAchat'][k] > \
-                        wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][3]:
-                    wallet['cash'] += wallet['nb'][k] * \
-                                      wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1][
-                                          'data'][3]
+                cloture = wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][3]
+                if cloture < wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 2]['data'][3] \
+                        and cloture < wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 3]['data'][3]:
+                    wallet['cash'] += wallet['nb'][k] * cloture
 
                     resum = resum + "Vente des actions " + wallet['actions'][k].getNom() + "<br/>"
 
                     nbJourPossession.append((dateDebut - wallet['dateAchat'][k]).days)
-                    if wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][3] - wallet['prixAchat'][k] > 0:
+                    if cloture - wallet['prixAchat'][k] > 0:
                         gagnante += 1
                     else:
                         perdante += 1
-                    gainTransaction.append(wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][3] - wallet['prixAchat'][k])
+                    gainTransaction.append(cloture - wallet['prixAchat'][k])
 
                     wallet['nb'].pop(k)
                     wallet['prixAchat'].pop(k)
@@ -178,26 +179,19 @@ def test_algo():
         while achats < nbAchats and k < 40 and (dateDebut.strftime('%A') not in ["Friday", "Saturday", "Sunday"]):
             if not (trieur.get_list()[k] in wallet['actions']) and (trieur.get_list()[k].getFinalNote() > 0):
                 nbActions = 0
+                ouverture = trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][0]
 
                 # Calcul du nombre de titre à acheter
-                while (nbActions *
-                       trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][
-                           0]) <= borne and (nbActions *
-                                             trieur.get_list()[k].getGraphData()[
-                                                 len(trieur.get_list()[k].getGraphData()) - 1]['data'][
-                                                 0]) < wallet['cash']:
+                while (nbActions * ouverture) <= borne and (nbActions * ouverture) < wallet['cash']:
                     nbActions += 1
 
                 if nbActions > 0:
                     # Ajout des titres achetés au portefeuille
                     wallet['actions'].append(trieur.get_list()[k])
-                    wallet['prixAchat'].append(
-                        trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1]['data'][0])
+                    wallet['prixAchat'].append(ouverture)
                     wallet['nb'].append(nbActions)
                     wallet['dateAchat'].append(dateDebut)
-                    wallet['cash'] -= nbActions * \
-                                      trieur.get_list()[k].getGraphData()[len(trieur.get_list()[k].getGraphData()) - 1][
-                                          'data'][0]
+                    wallet['cash'] -= nbActions * ouverture
 
                     nbAchats += 1
                     nbTransaction += 1
@@ -213,12 +207,16 @@ def test_algo():
         gain = (val - 10000) / 10000 * 100
 
         # Statistique moyenne sur le nombre de jour de possession d'une action et le gain moyen des transactions
-        if len(nbJourPossession) != 0:
-            for j in range(len(nbJourPossession)):
-                possessionMoyenne += nbJourPossession[j]
-            possessionMoyenne = possessionMoyenne / len(nbJourPossession)
+        possessionMoyenne = 0
+        for j in range(len(nbJourPossession)):
+            possessionMoyenne += nbJourPossession[j]
+        for j in range(len(wallet['dateAchat'])):
+            possessionMoyenne += (dateDebut - wallet['dateAchat'][j]).days
+        if len(nbJourPossession) != 0 or len(wallet['dateAchat']) != 0:
+            possessionMoyenne = possessionMoyenne / (len(nbJourPossession) + len(wallet['dateAchat']))
 
         if len(gainTransaction) != 0:
+            gainMoyen = 0
             for j in range(len(gainTransaction)):
                 gainMoyen += gainTransaction[j]
             gainMoyen = gainMoyen/len(gainTransaction)
@@ -245,6 +243,8 @@ def main():
     actions = list()
     donnees = list()
     classement = list()
+    dateDebut = datetime.date(2018, 12, 1)
+    dateDebutData = dateDebut - datetime.timedelta(days=200)
 
     # Requête à la base de données pour récupérer les différentes actions et les instancier
     cursor = mysql.connection.cursor()
@@ -258,6 +258,7 @@ def main():
         actions[len(actions) - 1].addSymbol(row[1])
     actions.remove(actions[0])  # Retire la première ligne qui contient les noms des colonnes
 
+    """
     # Récupération des données
     for action in actions:
         # Récupération des données de l'action sur un an
@@ -269,6 +270,23 @@ def main():
             # Data : OpeningPrice, TopPrice, BottomPrice, ClosingPrice, Volume
 
         action.remplirGraph(copy.deepcopy(donnees))
+        donnees.clear()"""
+
+    # Requête à la base de données pour récupérer les informations des actions
+    for j in range(len(actions)):
+        cursor = mysql.connection.cursor()
+        req = "SELECT * FROM days JOIN action USING(idAction) WHERE name like '%" + actions[
+            j].getNom() + "%' and date between '" + dateDebutData.isoformat() + "' and '" + dateDebut.isoformat() + "'"
+        cursor.execute(req)
+        data = cursor.fetchall()
+        cursor.close()
+
+        # On remplit le dictionnaire des données de l'action sur la période considérée
+        for row in data:
+            donnees.append({'date': row[1], 'data': [row[2], row[3], row[4], row[5], row[6]]})
+            # Data : OpeningPrice, TopPrice, BottomPrice, ClosingPrice, Volume
+
+        actions[j].remplirGraph(copy.deepcopy(donnees))
         donnees.clear()
 
     # Application du pipeline sur les actions
