@@ -10,7 +10,10 @@ from pipeAndFilter.filters.EaseOfMovement import EaseOfMovement
 
 
 class Algorithme:
-    """Procédure statique qui applique le pipe and filter à une action"""
+
+    """
+    @param action: Action à noter
+    """
     @staticmethod
     def Notation(action):
         if len(action.getGraphData()) == 0:

@@ -4,25 +4,29 @@ from operator import attrgetter
 class Trieur:
     actions: []
 
-    """Constructeur du Trieur
-    @:param actions la liste des actions"""
-
+    """
+    @param self: objet de la classe
+    @param actions: Ensemble d'actions à trier
+    """
     def __init__(self, actions):
         self.actions = actions
 
-    """Procédure d'ajout d'une action dans le trieur
-    @:param action l'action à ajouter"""
-
+    """
+    @param self: objet de la classe
+    @param action: Action à ajouter au trieur
+    """
     def addAction(self, action):
         self.actions.append(action)
 
-    """Procédure de classement des actions selon leur note"""
-
+    """
+    @param self: objet de la classe
+    """
     def classer(self):
         self.actions = sorted(self.actions, key=attrgetter('finalNote'))
 
-    """Fonction qui récupère la liste des actions
-    @:return la liste des actions"""
-
+    """
+    @param self: objet de la classe
+    @return La liste des actions du trieur
+    """
     def get_list(self):
         return self.actions

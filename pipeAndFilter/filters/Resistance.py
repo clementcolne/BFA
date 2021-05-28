@@ -4,9 +4,11 @@ from operator import itemgetter
 
 
 class Resistance(Filtre):
-    """Procédure d'exécution du filtre
-    @:param action l'action sur laquelle on applique le filtre"""
 
+    """
+    @param self: objet de la classe
+    @param action: Action sur laquelle on applique le filtre
+    """
     def process(self, action):
         # Le filtre commence par récupérer les données graphiques de l'action
         data = action.getGraphData()

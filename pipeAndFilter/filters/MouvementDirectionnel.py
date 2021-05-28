@@ -3,9 +3,11 @@ from math import floor
 
 
 class MouvementDirectionnel(Filtre):
-    """Procédure d'exécution du filtre
-    @:param action l'action sur laquelle on applique le filtre"""
 
+    """
+    @param self: objet de la classe
+    @param action: Action sur laquelle on applique le filtre
+    """
     def process(self, action):
         data = action.getGraphData()
         tr = list()

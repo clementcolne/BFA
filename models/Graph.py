@@ -1,17 +1,22 @@
 class Graph:
     data: []
 
-    """Constructeur de Graph"""
-
+    '''
+    @param self: objet de la classe
+    '''
     def __init__(self):
         self.data = []
 
-    """Procédure de remplissage du graph
-    @:param donnees les informations du graph"""
-
+    '''
+    @param self: objet de la classe
+    @param donnees: Données graphique d'une action
+    '''
     def remplirGraph(self, donnees):
         self.data = donnees
 
-    """Fonction qui récupère les données du graph"""
+    '''
+    @param self: objet de la classe
+    @return Les données graphiques d'une action
+    '''
     def getData(self):
         return self.data

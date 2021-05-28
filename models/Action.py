@@ -1,5 +1,4 @@
 from Graph import Graph
-from flask_mysqldb import MySQL
 
 
 class Action:
@@ -9,62 +8,85 @@ class Action:
     notes: []
     finalNote: int
 
-    """Constructeur de la classe Action
-    @:param name nom de l'action"""
-
+    '''
+    @param self: objet de cette classe
+    @param name: nom de l'action
+    '''
     def __init__(self, name):
         self.nom = name
         self.graph = Graph()
         self.notes = []
         self.finalNote = 0
 
-    """Procédure qui ajoute une note à l'action
-    @:param n note à ajouter"""
-
+    '''
+    @param sef: objet de cette classe
+    @param n: note à ajouter à l'action
+    '''
     def addNote(self, n):
         self.notes.append(n)
 
-    """Fonction qui récupère le nombre de notes données à l'action"""
-
+    '''
+    @param self: objet de cette classe
+    @return Longueur du tableau des notes
+    '''
     def getNotesLen(self):
         return len(self.notes)
 
-    """Procédure de calcul de la note final une fois le tableau des notes remplis"""
-
+    '''
+    @param self: objet de la classe
+    '''
     def calculFinalNote(self):
         for n in self.notes:
             self.finalNote += n
 
-    """Fonction pour récupérer la note finale après son calcul"""
-
+    '''
+    @param self: objet de la classe
+    @return La note finale de l'action
+    '''
     def getFinalNote(self):
         return self.finalNote
 
-    """Procédure qui récupère les informations du graph en base de données afin de le remplir
-    @:param dateDebut date de début des informations à récupérer
-    @:param dateFin date de fin des informations à récupérer"""
-
+    '''
+    @param self: objet de la classe
+    @param donnees: Liste des données graphiques de l'action
+    '''
     def remplirGraph(self, donnees):
         self.graph.remplirGraph(donnees)
 
-    """Fonction pour récupérer les données du graph"""
+    '''
+    @param self: objet de la classe
+    @return Les données graphiques de l'action
+    '''
     def getGraphData(self):
         return self.graph.getData()
 
-    """Fonction pour récupérer le nom de l'action"""
+    '''
+    @param self: objet de la classe
+    @return Le nom de l'action
+    '''
     def getNom(self):
         if self.nom.__contains__("'"):
             name = self.nom.split("'")
             return name[0] + "''" + name[1]
         return self.nom
 
-    """Procédure de ré-initialisation des notes"""
+    '''
+    @param self: objet de la classe
+    '''
     def resetNote(self):
         self.notes.clear()
         self.finalNote = 0
 
+    '''
+    @param self: objet de la classe
+    @param s : symbole de l'action
+    '''
     def addSymbol(self, s):
         self.symbol = s
 
+    '''
+    @param self: objet de la classe
+    @return Symbole de la classe
+    '''
     def getSymbol(self):
         return self.symbol
