@@ -147,10 +147,11 @@ def test_algo():
         k = 0
         # Vente des actions qui perdent de la valeur en fin de semaine
         if dateDebut.strftime('%A') == "Friday":
-            while k < len(wallet['actions']):
+            """while k < len(wallet['actions']):
                 cloture = wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][3]
-                if cloture < wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 2]['data'][3] \
-                        and cloture < wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 3]['data'][3]:
+                if cloture < wallet['prixAchat'][k] or \
+                        (cloture < wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 2]['data'][3]
+                         and cloture < wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 3]['data'][3]):
                     wallet['cash'] += wallet['nb'][k] * cloture
 
                     resum = resum + "Vente des actions " + wallet['actions'][k].getNom() + "<br/>"
@@ -168,7 +169,28 @@ def test_algo():
                     wallet['actions'].remove(wallet['actions'][k])
                     nbTransaction += 1
                 else:
-                    k += 1
+                    k += 1"""
+
+            # Vente de tout le portefeuille
+            while k < len(wallet['actions']):
+                cloture = wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][3]
+
+                wallet['cash'] += wallet['nb'][k] * cloture
+
+                resum = resum + "Vente des actions " + wallet['actions'][k].getNom() + "<br/>"
+                nbJourPossession.append((dateDebut - wallet['dateAchat'][k]).days)
+
+                if cloture - wallet['prixAchat'][k] > 0:
+                    gagnante += 1
+                else:
+                    perdante += 1
+                gainTransaction.append(cloture - wallet['prixAchat'][k])
+
+                wallet['nb'].pop(k)
+                wallet['prixAchat'].pop(k)
+                wallet['dateAchat'].pop(k)
+                wallet['actions'].remove(wallet['actions'][k])
+                nbTransaction += 1
 
         nbAchats = 10 - len(wallet['actions'])
         achats = 0

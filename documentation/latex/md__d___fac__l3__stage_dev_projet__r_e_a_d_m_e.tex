@@ -1,0 +1,33 @@
+\doxysection{L\textquotesingle{}\+API applique un algorithme sur les différentes actions du cac40 et leur donne une note. Les actions sont ensuites classées par ordre décroissant.}\label{md__d___fac__l3__stage_dev_projet__r_e_a_d_m_e_autotoc_md1}
+\doxysubsection{Fonctionnement de l\textquotesingle{}\+API}\label{md__d___fac__l3__stage_dev_projet__r_e_a_d_m_e_autotoc_md2}
+Au lancement de l\textquotesingle{}API, l\textquotesingle{}application lance la procédure statique de notation de la classe Algorithme. Celle-\/ci va instancier le pipeline ainsi que les classes représentant les différents filtres. Elle va ensuite ajouter chaque filtre au pipeline puis exécuter ce dernier. Celui-\/ci exécute les procédures d\textquotesingle{}exécution des filtres séparéments. Ceux-\/ci attribuent chacun une note à l\textquotesingle{}action sur laquelle il est appliqué. Après arrêt du pipeline, la note finale de l\textquotesingle{}action est calculée en additionnant toutes les notes obtenues par les différents filtres.
+
+A la fin de l\textquotesingle{}algorithme de notation, les actions sont classées par ordre décroissant des notes par la classe Trieur, qui retourne ensuite la nouvelle liste triée.\doxysubsection{Exécution en local}\label{md__d___fac__l3__stage_dev_projet__r_e_a_d_m_e_autotoc_md3}
+Pour exécuter les fichiers de tests en local, il faut juste lancer l\textquotesingle{}exécution du fichier voulu \+: \char`\"{}run unittest in file\char`\"{}
+
+Pour exécuter le fichier principal app.\+py, il faut un environnement web avec localhost et la base de donnée de l\textquotesingle{}API. Une fois l\textquotesingle{}environnement prêt, il suffit de lancer l\textquotesingle{}application en local, celle-\/ci doit s\textquotesingle{}ouvrir dans le localhost. Puis on ajoute à l\textquotesingle{}url le chemin qui permet d\textquotesingle{}exécuter la fonction souhaitée. La fonction test retourne le résultat de simulation sous forme texte dans le navigateur. La fonction principale main de l\textquotesingle{}API retourne le résultat de l\textquotesingle{}algorithme sous la forme d\textquotesingle{}un fichier JSON.\doxysubsection{Package Python nécessaire à l\textquotesingle{}\+API}\label{md__d___fac__l3__stage_dev_projet__r_e_a_d_m_e_autotoc_md4}
+
+\begin{DoxyItemize}
+\item flask
+\item mysql
+\item mysql-\/connector-\/python
+\item Flask-\/\+My\+SQLdb
+\end{DoxyItemize}\doxysubsection{Extension nécessaire à l\textquotesingle{}exécution des tests}\label{md__d___fac__l3__stage_dev_projet__r_e_a_d_m_e_autotoc_md5}
+
+\begin{DoxyItemize}
+\item Unittests
+\end{DoxyItemize}\doxysubsection{Extension nécessaire à l\textquotesingle{}exécution en local}\label{md__d___fac__l3__stage_dev_projet__r_e_a_d_m_e_autotoc_md6}
+
+\begin{DoxyItemize}
+\item mysqlclient
+\end{DoxyItemize}\doxysubsection{Package du repository}\label{md__d___fac__l3__stage_dev_projet__r_e_a_d_m_e_autotoc_md7}
+
+\begin{DoxyItemize}
+\item models {\itshape Classe Action et Graph \+: nécessaire à la description d\textquotesingle{}une action}
+\item pipe\+And\+Filter {\itshape Classe Pipeline, qui crée le pipeline pour l\textquotesingle{}exécution en pipe and filter}
+\begin{DoxyItemize}
+\item filters {\itshape Ensemble des classes qui correspondent aux filtres de l\textquotesingle{}application}
+\end{DoxyItemize}
+\item tools {\itshape Classes outils \+: Algorithme, Trieur, Config\+Test}
+\item tests {\itshape Ensemble des tests des classes de l\textquotesingle{}application} 
+\end{DoxyItemize}
