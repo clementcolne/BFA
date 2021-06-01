@@ -1,6 +1,7 @@
 import datetime
 import copy
-import yfinance as yf
+import dateutil.parser as parser
+import requests
 
 from flask import Flask
 from flask import jsonify
@@ -8,6 +9,7 @@ from flask_mysqldb import MySQL
 from models.Action import Action
 from tools.Algorithme import Algorithme
 from tools.Trieur import Trieur
+from connexionAPI.ConnexionAPI import ConnexionAPI
 
 app = Flask(__name__)
 
@@ -102,18 +104,6 @@ def test_algo():
 
             actions[j].remplirGraph(copy.deepcopy(donnees))
             donnees.clear()
-
-        """for action in actions:
-            # Récupération des données de l'action sur un an
-            graph = yf.Ticker(action.getSymbol() + ".PA").history(start=dateDebutData, end=dateDebut, interval="1d")
-
-            # Tri des données utiles dans une liste de dictionnaires
-            for row in graph.itertuples():
-                donnees.append({'date': row[0], 'data': [row[1], row[2], row[3], row[4], row[5]]})
-                # Data : OpeningPrice, TopPrice, BottomPrice, ClosingPrice, Volume
-
-            action.remplirGraph(copy.deepcopy(donnees))
-            donnees.clear()"""
 
         # Application du pipeline sur les actions
         for j in range(len(actions)):
@@ -241,7 +231,7 @@ def test_algo():
             gainMoyen = 0
             for j in range(len(gainTransaction)):
                 gainMoyen += gainTransaction[j]
-            gainMoyen = gainMoyen/len(gainTransaction)
+            gainMoyen = gainMoyen / len(gainTransaction)
 
         # Résumé des statistiques pour affichage
         resum = resum + "Valorisation à la fin de la journée : " + "{:.2f}".format(val) + "€<br/>"
@@ -250,8 +240,7 @@ def test_algo():
         resum = resum + "Gain moyen par transaction : " + "{:.2f}".format(gainMoyen) + "<br/>"
         resum = resum + "Nombre de transaction gagnante : " + "{:.2f}".format(
             gagnante) + ", Nombre de transaction perdante " \
-                        ": " + "{:.2f}".format(perdante) + \
-                "<br/> "
+                        ": " + "{:.2f}".format(perdante) + "<br/> "
         resum = resum + "Nombre de jour moyen de possession : " + "{:.2f}".format(possessionMoyenne) + "<br/>"
 
         resum = resum + "<br/>"
@@ -265,8 +254,6 @@ def main():
     actions = list()
     donnees = list()
     classement = list()
-    dateDebut = datetime.date(2018, 12, 1)
-    dateDebutData = dateDebut - datetime.timedelta(days=200)
 
     # Requête à la base de données pour récupérer les différentes actions et les instancier
     cursor = mysql.connection.cursor()
@@ -276,40 +263,44 @@ def main():
     cursor.close()
 
     for row in data:
-        actions.append(Action(row[0]))
-        actions[len(actions) - 1].addSymbol(row[1])
+        if row[0] != "Peugeot":
+            actions.append(Action(row[0]))
+            actions[len(actions) - 1].addSymbol(row[1])
+        else:
+            actions.append(Action("Stellantis"))
+            actions[len(actions) - 1].addSymbol("STLA")
     actions.remove(actions[0])  # Retire la première ligne qui contient les noms des colonnes
 
-    """
-    # Récupération des données
+    # Paramètres de connexion et de requête à l'API
+    params = {
+        'access_key': ConnexionAPI.get_key(),
+        'symbols': "",
+        'date_from': (datetime.date.today() - datetime.timedelta(days=200)).isoformat(),
+        'date_to': datetime.date.today().isoformat(),
+        'sort': "ASC"
+    }
+
+    # Récupération des données des actions
     for action in actions:
-        # Récupération des données de l'action sur un an
-        graph = yf.Ticker(action.getSymbol() + ".PA").history(period="1y", interval="1d")
+        params['symbols'] = action.getSymbol() + ".XPAR"
 
-        # Tri des données utiles dans une liste de dictionnaires
-        for row in graph.itertuples():
-            donnees.append({'date': row[0], 'data': [row[1], row[2], row[3], row[4], row[5]]})
-            # Data : OpeningPrice, TopPrice, BottomPrice, ClosingPrice, Volume
+        # Requête à l'API
+        api_result = requests.get(ConnexionAPI.get_base_url() + "eod", params)
+        api_response = api_result.json()
 
-        action.remplirGraph(copy.deepcopy(donnees))
-        donnees.clear()"""
+        try:
+            # Récupération des données par jour de l'action
+            for stock_data in api_response['data']:
+                date = parser.parse(stock_data['date'])
+                donnees.append({'date': date,
+                                'data': [stock_data['open'], stock_data['high'], stock_data['low'], stock_data['close'],
+                                         stock_data['volume']]})
+                # Data : OpeningPrice, TopPrice, BottomPrice, ClosingPrice, Volume
 
-    # Requête à la base de données pour récupérer les informations des actions
-    for j in range(len(actions)):
-        cursor = mysql.connection.cursor()
-        req = "SELECT * FROM days JOIN action USING(idAction) WHERE name like '%" + actions[
-            j].getNom() + "%' and date between '" + dateDebutData.isoformat() + "' and '" + dateDebut.isoformat() + "'"
-        cursor.execute(req)
-        data = cursor.fetchall()
-        cursor.close()
-
-        # On remplit le dictionnaire des données de l'action sur la période considérée
-        for row in data:
-            donnees.append({'date': row[1], 'data': [row[2], row[3], row[4], row[5], row[6]]})
-            # Data : OpeningPrice, TopPrice, BottomPrice, ClosingPrice, Volume
-
-        actions[j].remplirGraph(copy.deepcopy(donnees))
-        donnees.clear()
+            action.remplirGraph(copy.deepcopy(donnees))
+            donnees.clear()
+        except KeyError:
+            continue
 
     # Application du pipeline sur les actions
     for i in range(len(actions)):
@@ -337,22 +328,46 @@ def testData():
     cursor.close()
 
     for row in data:
-        actions.append(Action(row[0]))
-        actions[len(actions) - 1].addSymbol(row[1])
+        if row[0] != "Peugeot":
+            actions.append(Action(row[0]))
+            actions[len(actions) - 1].addSymbol(row[1])
+        else:
+            actions.append(Action("Stellantis"))
+            actions[len(actions) - 1].addSymbol("STLA")
     actions.remove(actions[0])  # Retire la première ligne qui contient les noms des colonnes
 
     # Récupération des données
+    params = {
+        'access_key': ConnexionAPI.get_key(),
+        'symbols': "",
+        'date_from': (datetime.date.today() - datetime.timedelta(days=200)).isoformat(),
+        'date_to': datetime.date.today().isoformat(),
+        'sort': "ASC",
+        'limit': 200
+    }
+
     for action in actions:
-        # Récupération des données de l'action sur un an
-        graph = yf.Ticker(action.getSymbol() + ".PA").history(period="1y", interval="1d")
+        params['symbols'] = action.getSymbol() + ".XPAR"
+        print(params['symbols'], " ", params['date_to'])
 
-        # Tri des données utiles dans une liste de dictionnaires
-        for row in graph.itertuples():
-            donnees.append({'date': row[0], 'data': [row[1], row[2], row[3], row[4], row[5]]})
-            # Data : OpeningPrice, TopPrice, BottomPrice, ClosingPrice, Volume
+        # Requête à l'API
+        api_result = requests.get(ConnexionAPI.get_base_url() + "eod", params)
+        api_response = api_result.json()
 
-        action.remplirGraph(copy.deepcopy(donnees))
-        donnees.clear()
+        try:
+            # Récupération des données par jour de l'action
+            for stock_data in api_response['data']:
+                date = parser.parse(stock_data['date'])
+                donnees.append({'date': date,
+                                'data': [stock_data['open'], stock_data['high'], stock_data['low'], stock_data['close'],
+                                         stock_data['volume']]})
+                # Data : OpeningPrice, TopPrice, BottomPrice, ClosingPrice, Volume
+
+            action.remplirGraph(copy.deepcopy(donnees))
+            donnees.clear()
+        except KeyError:
+            action.remplirGraph(None)
+            continue
 
     return jsonify(actions[len(actions) - 1].getGraphData())
 
