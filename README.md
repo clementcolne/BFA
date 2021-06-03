@@ -21,6 +21,8 @@ La fonction principale main de l'API retourne le résultat de l'algorithme sous 
 * mysql
 * mysql-connector-python
 * Flask-MySQLdb
+* requests
+* python-dateutil
 
 ### Extension nécessaire à l'exécution des tests
 * Unittests
