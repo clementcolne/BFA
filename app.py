@@ -6,12 +6,14 @@ import requests
 from flask import Flask
 from flask import jsonify
 from flask_mysqldb import MySQL
+from flask_cors import CORS, cross_origin
 from models.Action import Action
 from tools.Algorithme import Algorithme
 from tools.Trieur import Trieur
 from connexionAPI.ConnexionAPI import ConnexionAPI
 
 app = Flask(__name__)
+CORS(app)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -310,7 +312,8 @@ def main():
     trieur = Trieur(actions)
     trieur.classer()
     for action in trieur.get_list():
-        classement.append({'Nom': action.nom, 'Note': action.getFinalNote()})
+        classement.append({'Nom': action.nom, 'Symbole': action.getSymbol(), 'Note': action.getFinalNote()})
+    classement.reverse()
 
     return jsonify(classement)
 

@@ -23,8 +23,9 @@ La fonction principale main de l'API retourne le résultat de l'algorithme sous 
 * Flask-MySQLdb
 * requests
 * python-dateutil
+* Flask-Cors
 
-### Extension nécessaire à l'exécution des tests
+### Extension nécessaire à l'exécution des tests unitaires
 * Unittests
 
 ### Extension nécessaire à l'exécution en local
