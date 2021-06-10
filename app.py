@@ -5,8 +5,9 @@ import requests
 
 from flask import Flask
 from flask import jsonify
+from flask import Request
 from flask_mysqldb import MySQL
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from models.Action import Action
 from tools.Algorithme import Algorithme
 from tools.Trieur import Trieur
@@ -139,11 +140,13 @@ def test_algo():
         k = 0
         # Vente des actions qui perdent de la valeur en fin de semaine
         if dateDebut.strftime('%A') == "Friday":
-            """while k < len(wallet['actions']):
+            while k < len(wallet['actions']):
                 cloture = wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][3]
                 if cloture < wallet['prixAchat'][k] or \
-                        (cloture < wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 2]['data'][3]
-                         and cloture < wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 3]['data'][3]):
+                        (cloture <
+                         wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 2]['data'][3]
+                         and cloture <
+                         wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 3]['data'][3]):
                     wallet['cash'] += wallet['nb'][k] * cloture
 
                     resum = resum + "Vente des actions " + wallet['actions'][k].getNom() + "<br/>"
@@ -161,10 +164,10 @@ def test_algo():
                     wallet['actions'].remove(wallet['actions'][k])
                     nbTransaction += 1
                 else:
-                    k += 1"""
+                    k += 1
 
             # Vente de tout le portefeuille
-            while k < len(wallet['actions']):
+            """while k < len(wallet['actions']):
                 cloture = wallet['actions'][k].getGraphData()[len(wallet['actions'][k].getGraphData()) - 1]['data'][3]
 
                 wallet['cash'] += wallet['nb'][k] * cloture
@@ -182,7 +185,7 @@ def test_algo():
                 wallet['prixAchat'].pop(k)
                 wallet['dateAchat'].pop(k)
                 wallet['actions'].remove(wallet['actions'][k])
-                nbTransaction += 1
+                nbTransaction += 1"""
 
         nbAchats = 10 - len(wallet['actions'])
         achats = 0
@@ -312,10 +315,32 @@ def main():
     trieur = Trieur(actions)
     trieur.classer()
     for action in trieur.get_list():
-        classement.append({'Nom': action.nom, 'Symbole': action.getSymbol(), 'Note': action.getFinalNote()})
+        classement.append({'Nom': action.nom, 'Symbole': action.getSymbol()})
     classement.reverse()
 
     return jsonify(classement)
+
+
+@app.route('/currentPrice/<symbol>')
+def currentPrice(symbol):
+    """symbol = symbol
+    print(symbol)
+
+    if symbol is not None:
+        # Paramètres de connexion et de requête à l'API
+        params = {'access_key': ConnexionAPI.get_key(),
+                  'symbols': symbol + "XPAR"
+        }
+
+        # Requête à l'API
+        api_result = requests.get(ConnexionAPI.get_base_url() + "intraday", params)
+        api_response = api_result.json()
+
+        return jsonify(api_response['data'])
+    else:
+        return "Error"""""
+
+    return "NON FONCTIONNEL"
 
 
 @app.route('/testData')
