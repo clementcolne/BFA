@@ -343,6 +343,25 @@ def currentPrice(symbol):
     return "NON FONCTIONNEL"
 
 
+@app.route('/lastPrice/<symbol>')
+def lastPrice(symbol):
+    symbol = symbol
+
+    if symbol is not None:
+        # Paramètres de connexion et de requête à l'API
+        params = {'access_key': ConnexionAPI.get_key(),
+                  'symbols': symbol + ".XPAR"
+                  }
+
+        # Requête à l'API
+        api_result = requests.get(ConnexionAPI.get_base_url() + "eod/latest", params)
+        api_response = api_result.json()
+
+        return "{:.2f}".format(api_response['data'][0]['close'])
+    else:
+        return "Error"
+
+
 @app.route('/testData')
 def testData():
     actions = list()
