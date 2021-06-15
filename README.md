@@ -15,6 +15,8 @@ Une fois l'environnement prêt, il suffit de lancer l'application en local, cell
 Puis on ajoute à l'url le chemin qui permet d'exécuter la fonction souhaitée.
 La fonction test retourne le résultat de simulation sous forme texte dans le navigateur.
 La fonction principale main de l'API retourne le résultat de l'algorithme sous la forme d'un fichier JSON.
+La fonction currentPrice devrait retourner le prix courant d'une action, cependant elle n'est pas fonctionnelle.
+La fonction lastPrice prend en argument le symbole d'une action et retourne son dernier prix de clôture connu.
 
 ### Package Python nécessaire à l'API
 * flask
