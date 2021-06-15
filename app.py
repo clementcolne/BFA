@@ -315,7 +315,10 @@ def main():
     trieur = Trieur(actions)
     trieur.classer()
     for action in trieur.get_list():
-        classement.append({'Nom': action.nom, 'Symbole': action.getSymbol()})
+        if action.nom != "L'oreal":
+            classement.append({'Nom': action.nom, 'Symbole': action.getSymbol()})
+        else:
+            classement.append({'Nom': "L\'Oréal", 'Symbole': action.getSymbol()})
     classement.reverse()
 
     return jsonify(classement)
